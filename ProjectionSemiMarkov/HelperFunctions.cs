@@ -41,17 +41,17 @@ namespace ProjectionSemiMarkov
 
     public static Product SumProducts(List<Product> products)
     {
-      var technicalContinousPayment = products.SelectMany(x => x.technicalContinousPayment).GroupBy(x => x.Key, x => x.Value)
+      var technicalContinousPayment = products.SelectMany(x => x.TechnicalContinuousPayment).GroupBy(x => x.Key, x => x.Value)
         .ToDictionary(x => x.Key, x => (Func<double, double>)(k => x.Sum(z => z(k))));
 
-      var technicalJumpPayment = products.SelectMany(x => x.technicalJumpPayment).GroupBy(x => x.Key, x => x.Value.ToList())
+      var technicalJumpPayment = products.SelectMany(x => x.TechnicalJumpPayment).GroupBy(x => x.Key, x => x.Value.ToList())
         .ToDictionary(x => x.Key, x => x.SelectMany(z => z).GroupBy(z => z.Key, z => z.Value)
           .ToDictionary(y => y.Key, y => (Func<double, double>)(k => y.Sum(z => z(k)))));
 
-      var marketContinousPayment = products.SelectMany(x => x.marketContinousPayment).GroupBy(x => x.Key, x => x.Value)
+      var marketContinousPayment = products.SelectMany(x => x.MarketContinuousPayment).GroupBy(x => x.Key, x => x.Value)
         .ToDictionary(x => x.Key, x => (Func<double, double, double>)((k, v) => x.Sum(z => z(k, v))));
 
-      var marketJumpPayment = products.SelectMany(x => x.marketJumpPayment).GroupBy(x => x.Key, x => x.Value.ToList())
+      var marketJumpPayment = products.SelectMany(x => x.MarketJumpPayment).GroupBy(x => x.Key, x => x.Value.ToList())
         .ToDictionary(x => x.Key, x => x.SelectMany(z => z).GroupBy(z => z.Key, z => z.Value)
           .ToDictionary(y => y.Key, y => (Func<double, double, double>)((k, v) => y.Sum(z => z(k, v)))));
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Z6HYM\\Desktop\\Projection Implementation C# - Copy\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj": {}
+    "C:\\Users\\Z6HYM\\Desktop\\ImplementationProjection-CSharp-master\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Z6HYM\\Desktop\\Projection Implementation C# - Copy\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj": {
+    "C:\\Users\\Z6HYM\\Desktop\\ImplementationProjection-CSharp-master\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Z6HYM\\Desktop\\Projection Implementation C# - Copy\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj",
+        "projectUniqueName": "C:\\Users\\Z6HYM\\Desktop\\ImplementationProjection-CSharp-master\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj",
         "projectName": "ProjectionSemiMarkov",
-        "projectPath": "C:\\Users\\Z6HYM\\Desktop\\Projection Implementation C# - Copy\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj",
+        "projectPath": "C:\\Users\\Z6HYM\\Desktop\\ImplementationProjection-CSharp-master\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj",
         "packagesPath": "C:\\Users\\Z6HYM\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Z6HYM\\Desktop\\Projection Implementation C# - Copy\\ProjectionSemiMarkov\\obj\\",
+        "outputPath": "C:\\Users\\Z6HYM\\Desktop\\ImplementationProjection-CSharp-master\\ProjectionSemiMarkov\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

@@ -189,7 +189,7 @@ namespace ProjectionSemiMarkov
     public static Product CreateLifeAnnuity(double value)
     {
       Func<double, double> paymentsTechnical = x => GreaterThanIndicator(x, 67) * value;
-      Func<double, double, double> paymentsWithDuration = (x, y) => paymentsTechnical(x);
+      Func<double, double, double> paymentsMarket = (x, y) => paymentsTechnical(x);
 
       var technicalContinousPayments = new Dictionary<State, Func<double, double>>();
       technicalContinousPayments.Add(State.Active, paymentsTechnical);
@@ -198,8 +198,8 @@ namespace ProjectionSemiMarkov
       var technicalJumpPayments = new Dictionary<State, Dictionary<State, Func<double, double>>>();
 
       var marketContinousPayments = new Dictionary<State, Func<double, double, double>>();
-      marketContinousPayments.Add(State.Active, paymentsWithDuration);
-      marketContinousPayments.Add(State.Disabled, paymentsWithDuration);
+      marketContinousPayments.Add(State.Active, paymentsMarket);
+      marketContinousPayments.Add(State.Disabled, paymentsMarket);
 
       var marketJumpPayments = new Dictionary<State, Dictionary<State, Func<double, double, double>>>();
 
