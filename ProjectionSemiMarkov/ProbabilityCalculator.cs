@@ -84,7 +84,7 @@ namespace ProjectionSemiMarkov
         var durationMaxIndexCur = DurationSupportIndex(policy.initialDuration, t);
         var durationMaxIndexPrev = DurationSupportIndex(policy.initialDuration, t - 1);
 
-        var probIntegralPieces = new double[durationMaxIndexCur + 1];
+        var probIntegrals = new double[durationMaxIndexCur + 1];
 
         // Loop over j in p_{z0,j}(...)
         foreach (var j in stateSpace)
@@ -96,11 +96,11 @@ namespace ProjectionSemiMarkov
             if (!genderIntensity[l].TryGetValue(j, out intensity))
               continue;
 
-            probIntegralPieces[1] = 0;
+            probIntegrals[1] = 0;
             // Riemann sum over duration for integrals
             for (var u = 1; u <= durationMaxIndexPrev; u++)
             {
-              probIntegralPieces[u + 1] = probIntegralPieces[u] + (policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])
+              probIntegrals[u + 1] = probIntegrals[u] + (policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])
                 * genderIntensity[l][j](policy.age + policy.initialTime + IndexToTime(t - 0.5),
                 policy.initialDuration + IndexToTime(u - 0.5)) * stepSize;
 
@@ -108,20 +108,20 @@ namespace ProjectionSemiMarkov
             }
 
             // For j = l, we need to subtract the cumulative integral for each duration
-            // For j \neq l, we need to add the whole integral from the
+            // For j \neq l, we need to add the whole integral from 0 to D(s) for each duration
             if (j == l)
             {
               for (var u = 1; u <= durationMaxIndexCur; u++)
-                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] - probIntegralPieces[u];
+                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] - probIntegrals[u];
             }
             else
             {
               for (var u = 1; u <= durationMaxIndexCur; u++)
-                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + probIntegralPieces.Last();
+                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + probIntegrals.Last();
             }
           }
 
-          // We add the start probability
+          // We add the previous probability p_ij(t_0,s,u,d+s-t_0) to get p_ij(t_0,s+h,u,d+s+h-t_0)= p_ij(t_0,s,u,d+s-t_0)+d/ds p_ij(t_0,s,u,d+s-t_0)*h
           for (var u = 1; u <= durationMaxIndexCur; u++)
             policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + policyProbabilities[j][t - 1][u - 1];
         }
