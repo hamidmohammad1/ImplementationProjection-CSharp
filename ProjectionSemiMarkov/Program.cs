@@ -20,7 +20,7 @@ namespace ProjectionSemiMarkov
         .ToDictionary(policy => policy.Key,
           policy => policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active]
             .Zip(policy.Value[(PaymentStream.Original, Sign.Negative)][State.Active], (x, y) => x + y)
-            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => x / y)
+            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => y == 0 ? 1.0 : x / y)
             .ToArray());
 
       var policies = Setup.CreatePolicies();
