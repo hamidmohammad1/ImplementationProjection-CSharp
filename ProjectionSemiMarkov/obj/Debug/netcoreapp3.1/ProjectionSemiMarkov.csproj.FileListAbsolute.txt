@@ -71,7 +71,6 @@ C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMark
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll

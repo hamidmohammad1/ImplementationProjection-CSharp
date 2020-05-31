@@ -16,7 +16,7 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// The state space. It is a subset of <see cref="State"/>.
     /// </summary>
-    protected IEnumerable<State> stateSpace;
+    public IEnumerable<State> stateSpace { get; internal set; }
 
     /// <summary>
     /// A dictionary containing the market intensities.

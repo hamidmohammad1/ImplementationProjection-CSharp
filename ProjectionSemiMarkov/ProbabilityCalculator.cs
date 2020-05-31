@@ -18,16 +18,21 @@ namespace ProjectionSemiMarkov
     /// </remarks>
     public Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; private set; }
 
+    public Dictionary<string, Dictionary<State, double[][]>> RhoProbabilities { get; private set; }
+
     public Dictionary<string, (State, double)> PolicyIdInitialStateDuration { get; private set; }
 
     public double Time { get; private set; }
+
+    public Dictionary<string, double[]> FreePolicyFactor { get; private set; }
 
     /// <summary>
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityCalculator(
       Dictionary<string, (State, double)> policyIdInitialStateDuration,
-      double time)
+      double time,
+      Dictionary<string, double[]> freePolicyFactor)
     {
       // Deducing the state space from the possible transitions in intensity dictionary
       var allPossibleTransitions = marketIntensities[Gender.Female].Union(marketIntensities[Gender.Male]).ToList();
@@ -36,22 +41,48 @@ namespace ProjectionSemiMarkov
 
       this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
       this.Time = time;
+      this.FreePolicyFactor = freePolicyFactor;
     }
 
     /// <summary>
     /// Allocating memory for matrices inside <see cref="Probabilities"/>.
     /// </summary>
-    private void AllocateMemoryAndInitialize()
+    private void AllocateMemoryAndInitialize(bool calculateRhoProbability)
     {
       Probabilities = new Dictionary<string, Dictionary<State, double[][]>>();
+      AllocateMemoryAndInitializePerDictionary(Probabilities, false);
+
+      if (calculateRhoProbability)
+      {
+        RhoProbabilities = new Dictionary<string, Dictionary<State, double[][]>>();
+        AllocateMemoryAndInitializePerDictionary(RhoProbabilities, true);
+      }
+    }
+
+    /// <summary>
+    /// Allocating memory for matrices inside <see cref="dic"/>.
+    /// </summary>
+    private void AllocateMemoryAndInitializePerDictionary(
+      Dictionary<string, Dictionary<State, double[][]>> dic,
+      bool calculateRhoProbability)
+    {
+      var statesWhereRhoModifiedIsValid = new List<State> { State.Active, State.Disabled };
 
       foreach (var (policyId, v) in policies)
       {
         var (initialState, initialDuration) = PolicyIdInitialStateDuration[policyId];
+
+        if (!statesWhereRhoModifiedIsValid.Contains(initialState) && calculateRhoProbability)
+          throw new Exception($"Rho-Modified transition do not make sense in {initialState}");
+
         var numberOfTimePoints = GetNumberOfTimePoints(v, Time);
         var stateProbabilities = new Dictionary<State, double[][]>();
 
-        foreach (var state in stateSpace)
+        var statesToCreateEntryFor = calculateRhoProbability
+          ? new List<State>{State.FreePolicyActive, State.FreePolicyDead, State.FreePolicyDisabled, State.FreePolicySurrender}
+          : stateSpace;
+
+        foreach (var state in statesToCreateEntryFor)
         {
           var arrayOfArray = new double[numberOfTimePoints][];
 
@@ -60,42 +91,80 @@ namespace ProjectionSemiMarkov
               new double[DurationSupportIndex(initialDuration, timeIndex) + 1];
 
           // Default values of array elements are zero, so we only set probability for last duration to one.
-          arrayOfArray[0][arrayOfArray[0].Length - 1] = state == initialState ? 1 : 0;
+          var boundary = calculateRhoProbability ? 0.0 : 1;
+          arrayOfArray[0][arrayOfArray[0].Length - 1] = state == initialState ? boundary : 0;
 
           stateProbabilities.Add(state, arrayOfArray);
         }
-        Probabilities.Add(policyId, stateProbabilities);
+        dic.Add(policyId, stateProbabilities);
       }
     }
 
     public Dictionary<string, Dictionary<State, double[][]>> Calculate(bool calculateRhoProbability)
     {
-      AllocateMemoryAndInitialize();
-
-      Parallel.ForEach(policies, policy => ProbabilityCalculatePerPolicy(policy.Value));
+      AllocateMemoryAndInitialize(calculateRhoProbability);
+      Parallel.ForEach(policies, policy => ProbabilityCalculatePerPolicy(policy.Value, calculateRhoProbability));
 
       return(Probabilities);
     }
 
-    public void ProbabilityCalculatePerPolicy(Policy policy)
+    private void ProbabilityCalculatePerPolicy(Policy policy, bool calculateRhoProbability)
     {
-      var policyProbabilities = Probabilities[policy.policyId];
-      var numberOfTimePoints = policyProbabilities.First().Value.Length;
+      ProbabilityCalculatePerPolicy(policy, Probabilities[policy.policyId], false);
+
+      if (calculateRhoProbability)
+        ProbabilityCalculatePerPolicy(policy, RhoProbabilities[policy.policyId], true);
+    }
+
+    /// <remarks>
+    /// Approximation of lebesgue integral
+    /// int_0^t f(s) p(.., ds)
+    /// \approx sum_i P( s_i < Z < s_(i+1)) f((s_(i+1)-s_i)/2)
+    /// = sum_i (p(.., s_(i+1)) - p(.., s_i)) * f((s_(i+1)-s_i)/2)
+    /// </remarks>
+    private void ProbabilityCalculatePerPolicy(
+      Policy policy,
+      IReadOnlyDictionary<State, double[][]> prob,
+      bool calculateRhoProbability)
+    {
+      var numberOfTimePoints = prob.First().Value.Length;
       var genderIntensity = marketIntensities[policy.gender];
+      var (initialState, initialDuration) = PolicyIdInitialStateDuration[policy.policyId];
+
+      var states = calculateRhoProbability
+        ? new List<State> { State.FreePolicyActive, State.FreePolicyDead, State.FreePolicyDisabled, State.FreePolicySurrender }
+        : stateSpace.ToList();
+      var possibleMidStates = genderIntensity.Keys.Where(x => states.Contains(x));
 
       // Loop over each Time point
       for (var t = 1; t < numberOfTimePoints; t++)
       {
-        var durationMaxIndexCur = DurationSupportIndex(policy.initialDuration, t);
-        var durationMaxIndexPrev = DurationSupportIndex(policy.initialDuration, t - 1);
+        var durationMaxIndexCur = DurationSupportIndex(initialDuration, t);
+        var durationMaxIndexPrev = DurationSupportIndex(initialDuration, t - 1);
 
         var probIntegrals = new double[durationMaxIndexCur + 1];
+        var sumRho = 0.0;
 
         // Loop over j in p_{z0,j}(...)
-        foreach (var j in stateSpace)
+        foreach (var j in states)
         {
+          // Handling of j = FreePolicyActive in Rho-Modified probabilities
+          if (j == State.FreePolicyActive && calculateRhoProbability)
+          {
+            // Using a DurationSupportIndex, when the function name makes no sense here. The return value is correct one.
+            for (var u = 1; u <= durationMaxIndexPrev; u++)
+            {
+              sumRho += genderIntensity[State.Active][State.FreePolicyActive](policy.age + Time + IndexToTime(t - 0.5), initialDuration + IndexToTime(u - 0.5))
+                * (Probabilities[policy.policyId][initialState][t][u] - Probabilities[policy.policyId][initialState][t][u - 1]);
+            }
+
+            var midPointFreePolicyFactor = (FreePolicyFactor[policy.policyId][DurationSupportIndex(Time, t)]
+              + FreePolicyFactor[policy.policyId][DurationSupportIndex(Time, t - 1)]) / 2;
+            sumRho *= stepSize * midPointFreePolicyFactor;
+          }
+
           // Loop over l in Kolmogorov forward integro-differential equations (Prob. mass going in)
-          foreach (var l in genderIntensity.Keys)
+          foreach (var l in possibleMidStates)
           {
             Func<double, double, double> intensity;
             if (!genderIntensity[l].TryGetValue(j, out intensity))
@@ -105,9 +174,9 @@ namespace ProjectionSemiMarkov
             // Riemann sum over duration for integrals
             for (var u = 1; u <= durationMaxIndexPrev; u++)
             {
-              probIntegrals[u + 1] = probIntegrals[u] + (policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])
+              probIntegrals[u + 1] = probIntegrals[u] + (prob[l][t - 1][u] - prob[l][t - 1][u - 1])
                 * genderIntensity[l][j](policy.age + Time + IndexToTime(t - 0.5),
-                policy.initialDuration + IndexToTime(u - 0.5)) * stepSize;
+                  initialDuration + IndexToTime(u - 0.5)) * stepSize;
 
               //todo: Should probably not have age in policy. Could consider splitting age and Time to allow for more general intesities.
             }
@@ -117,21 +186,21 @@ namespace ProjectionSemiMarkov
             if (j == l)
             {
               for (var u = 1; u <= durationMaxIndexCur; u++)
-                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] - probIntegrals[u];
+                prob[j][t][u] = prob[j][t][u] - probIntegrals[u];
             }
             else
             {
               for (var u = 1; u <= durationMaxIndexCur; u++)
-                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + probIntegrals.Last();
+                prob[j][t][u] = prob[j][t][u] + probIntegrals.Last();
             }
           }
 
-          // We add the previous probability p_ij(t_0,s,u,d+s-t_0) to get p_ij(t_0,s+h,u,d+s+h-t_0)= p_ij(t_0,s,u,d+s-t_0)+d/ds p_ij(t_0,s,u,d+s-t_0)*h
+          // We add the previous probability p_ij(t_0,s,u,d+s-t_0) and (1_(j = J + 1) int ... ) to get
+          // p_ij(t_0,s+h,u,d+s+h-t_0)= p_ij(t_0,s,u,d+s-t_0) + d/ds p_ij(t_0,s,u,d+s-t_0) * h
           for (var u = 1; u <= durationMaxIndexCur; u++)
-            policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + policyProbabilities[j][t - 1][u - 1];
+            prob[j][t][u] = prob[j][t][u] + sumRho + prob[j][t - 1][u - 1];
         }
       }
     }
-
   }
 }

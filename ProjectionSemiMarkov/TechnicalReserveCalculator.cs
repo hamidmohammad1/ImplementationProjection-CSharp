@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProjectionSemiMarkov
 {
-  class TechnicalReserveCalculator : Calculator
+  public class TechnicalReserveCalculator : Calculator
   {
     /// <summary>
     /// States with reserve
