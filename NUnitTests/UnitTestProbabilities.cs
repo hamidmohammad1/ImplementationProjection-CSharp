@@ -7,16 +7,15 @@ using System.Linq;
 using ProjectionSemiMarkov;
 using static ProjectionSemiMarkov.HelperFunctions;
 using static ProjectionSemiMarkov.Setup;
-using static ProjectionSemiMarkov.ProbabilityCalculator;
 
 namespace NUnitTests
 {
   [TestFixture]
   public class Tests
   {
+    private double epsilon = Math.Pow(10, -15);
     private Policy policy1;
     private Dictionary<string, Policy> policies;
-    private double epsilon;
     private Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketBasis;
     private (Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>>, double) technicalBasis;
     private IEnumerable<State> stateSpace;
@@ -24,13 +23,27 @@ namespace NUnitTests
     [SetUp]
     public void Setup() //run before each test
     {
-      var lifeAnnuityProduct  = CreateLifeAnnuity(1000.0);
-      var policy1Products = new List<Product> { lifeAnnuityProduct };
-      policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30, initialState: State.Active,
-          initialTime: 0, initialDuration: 5, originalBenefits: SumProducts(policy1Products), bonusBenefit: lifeAnnuityProduct);
+      var lifeAnnuityProduct = CreateLifeAnnuity(1000);
+      var premiumProduct = CreatePremiumPayment(-200);
+      var deferredDisabilityAnnuity = CreateDeferredDisabilityAnnuity(500);
 
-      policies =  new Dictionary<string, Policy>();
-      policies.Add(policy1.policyId, policy1);
+      var policy1Premium = new List<Product> { premiumProduct };
+      var policy1Benefits = new List<Product> { lifeAnnuityProduct, deferredDisabilityAnnuity };
+
+      var payments = new Dictionary<(PaymentStream, Sign), Product>
+        {
+          { (PaymentStream.Original, Sign.Positive), SumProducts(policy1Benefits) },
+          { (PaymentStream.Original, Sign.Negative), SumProducts(policy1Premium) },
+          { (PaymentStream.Bonus, Sign.Positive), lifeAnnuityProduct }
+        };
+
+      policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30,
+        initialState: State.Active, initialTime: 0, initialDuration: 5, payments: payments);
+
+      policies = new Dictionary<string, Policy>
+      {
+        { policy1.policyId, policy1 }
+      };
       epsilon = Math.Pow(10, -15);
       marketBasis = CreateMarketBasisIntensities();
       technicalBasis = CreateTechnicalBasisIntensities();
@@ -62,12 +75,14 @@ namespace NUnitTests
       var marketProbabilityCalculator = new ProbabilityCalculator(marketBasis, policies);
       var probabilities = marketProbabilityCalculator.Calculate();
 
-      var targetProbabilities = new List<double>();
-      targetProbabilities.Add(1.0); 
-      targetProbabilities.Add(0.98893149449659778);
-      targetProbabilities.Add(0.97799283951155114);
-      targetProbabilities.Add(0.96718243333451615);
-      targetProbabilities.Add(0.95649869488622441);
+      var targetProbabilities = new List<double>
+      {
+        1.0,
+        0.98893149449659778,
+        0.97799283951155114,
+        0.96718243333451615,
+        0.95649869488622441
+      };
 
       for (var t = 0; t < 5; t++)
       {
@@ -125,18 +140,18 @@ namespace NUnitTests
       var marketProbabilityCalculator = new ProbabilityCalculator(marketBasis, policies);
 
       for (var t = 0; t <= policy1.expiryAge; t++)
-            {
-              int umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, t);
-              for (var u = 0; u <= umax; u++)
-              {
-                Assert.That(marketBasis[policy1.gender][State.Active][State.Active](t, u), Is.EqualTo(
-                  marketBasis[policy1.gender][State.Active][State.Disabled](t, u) + 
-                  marketBasis[policy1.gender][State.Active][State.FreePolicyActive](t, u) +
-                  marketBasis[policy1.gender][State.Active][State.Dead](t, u) +
-                  marketBasis[policy1.gender][State.Active][State.Surrender](t, u)
-                  ).Within(epsilon));
-              }
-            }
+      {
+        int umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, t);
+        for (var u = 0; u <= umax; u++)
+        {
+          Assert.That(marketBasis[policy1.gender][State.Active][State.Active](t, u), Is.EqualTo(
+            marketBasis[policy1.gender][State.Active][State.Disabled](t, u) + 
+            marketBasis[policy1.gender][State.Active][State.FreePolicyActive](t, u) +
+            marketBasis[policy1.gender][State.Active][State.Dead](t, u) +
+            marketBasis[policy1.gender][State.Active][State.Surrender](t, u)
+            ).Within(epsilon));
+        }
+      }
     }
 
   }
