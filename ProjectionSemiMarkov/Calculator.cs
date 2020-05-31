@@ -28,8 +28,6 @@ namespace ProjectionSemiMarkov
     /// </summary>
     protected Dictionary<string, Policy> policies;
 
-    public abstract  Dictionary<string, Dictionary<State, double[][]>> Calculate();
-
     /// <summary>
     /// Calculate number of time points for a policy.
     /// </summary>

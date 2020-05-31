@@ -8,9 +8,14 @@ namespace ProjectionSemiMarkov
   class TechnicalReserveCalculator : Calculator
   {
     /// <summary>
+    /// States with reserve
+    /// </summary>
+    IEnumerable<State> statesWithReserve => stateSpace.Where(x => x != State.Dead);
+
+    /// <summary>
     /// Technical interest
     /// </summary>
-    double technicalInterest;
+    readonly double technicalInterest;
 
     /// <summary>
     /// A dictionary indexed on <see cref="Policy.policyId"/> and contains technical reserves.
@@ -55,33 +60,33 @@ namespace ProjectionSemiMarkov
       }
     }
 
-    public override Dictionary<string, Dictionary<State, double[][]>> Calculate()
+    public Dictionary<string, Dictionary<State, double[]>> Calculate()
     {
       AllocateMemoryAndInitialize();
 
       Parallel.ForEach(policies, policy => CalculateTechnicalReservePerPolicy(policy.Value));
 
-      var dummy = new Dictionary<string, Dictionary<State, double[][]>>();
-      return (dummy);
+      return technicalReserve;
     }
 
     private void CalculateTechnicalReservePerPolicy(Policy policy)
     {
       var stateTechnicalReserves = technicalReserve[policy.policyId];
-      var contBenefits = policy.originalBenefits.technicalContinousPayment;
-      var jumpBenefits = policy.originalBenefits.technicalJumpPayment;
+      var contBenefits = policy.originalBenefits.TechnicalContinuousPayment;
+      var jumpBenefits = policy.originalBenefits.TechnicalJumpPayment;
       var genderIntensity = intensities[policy.gender];
 
+      // We subtract 2 to get to second last index.
       for (var i = stateTechnicalReserves.First().Value.Length - 2; i >= 0; i--)
       {
-        // We do not handle payments in dead, so the reserve is zero.
-        foreach (var soJournState in stateSpace.Where(x => x != State.Dead))
+        // We do not handle payments in dead
+        foreach (var soJournState in statesWithReserve)
         {
-          var time = policy.age + policy.expiryAge + IndexToTime(i + 0.5);
+          var time = policy.age + IndexToTime(i + 0.5);
 
           stateTechnicalReserves[soJournState][i] = (contBenefits.TryGetValue(soJournState, out var value) ? value(time) : 0.0)
             - (technicalInterest + genderIntensity[soJournState][soJournState](time, 0.0)) * stateTechnicalReserves[soJournState][i + 1];
-
+          var k = stateTechnicalReserves[soJournState][i];
           foreach (var toState in stateSpace.Where(x => x != soJournState))
           {
             if (HelperFunctions.TransitionExists(genderIntensity, soJournState, toState))

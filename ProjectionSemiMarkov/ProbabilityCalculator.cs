@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-
-using static ProjectionSemiMarkov.HelperFunctions;
 
 namespace ProjectionSemiMarkov
 {
@@ -67,7 +63,7 @@ namespace ProjectionSemiMarkov
       }
     }
 
-    public override Dictionary<string, Dictionary<State, double[][]>> Calculate()
+    public Dictionary<string, Dictionary<State, double[][]>> Calculate()
     {
       AllocateMemoryAndInitialize();
 

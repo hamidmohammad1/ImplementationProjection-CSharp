@@ -65,3 +65,14 @@ C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\
 C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
 C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
 C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
+C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
