@@ -51,7 +51,7 @@ namespace ProjectionSemiMarkov
 
       foreach (var (policyId, v) in policies)
       {
-        var numberOfTimePoints = GetNumberOfTimePoints(v);
+        var numberOfTimePoints = GetNumberOfTimePoints(v, 0.0);
         var comStateTechnicalReserve = new Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>();
 
         var combs = new List<(PaymentStream, Sign)>

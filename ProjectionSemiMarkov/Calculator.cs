@@ -29,15 +29,17 @@ namespace ProjectionSemiMarkov
     protected Dictionary<string, Policy> policies;
 
     /// <summary>
-    /// Calculate number of time points for a policy.
+    /// Calculate number of Time points for a policy.
     /// </summary>
-    public int GetNumberOfTimePoints(Policy policy)
+    public int GetNumberOfTimePoints(Policy policy, double time)
     {
-      // We assume the last time and ages are at the form stepSize * n for some n.
-      // We are adding one, to allocate for a time 0.
-      var value = (policy.expiryAge - policy.age) / stepSize + 1;
+      // We assume the last Time and ages are at the form stepSize * n for some n.
+      // We are adding one, to allocate for a Time 0.
+      var value = (policy.expiryAge - policy.age - time) / stepSize + 1;
       if (!doubleIsInteger(value))
-        throw new ArgumentException("Either expiry age or age is not a multiplikum of step size", policy.policyId);
+        throw new ArgumentException("Either expiry age or age is not a multiply of step size", policy.policyId);
+      if (value <= 0)
+        value = 0;
 
       return Convert.ToInt32(value);
     }

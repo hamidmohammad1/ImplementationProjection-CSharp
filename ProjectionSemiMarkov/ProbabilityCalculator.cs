@@ -18,21 +18,28 @@ namespace ProjectionSemiMarkov
     /// </remarks>
     public Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; private set; }
 
+    public Dictionary<string, (State, double)> PolicyIdInitialStateDuration { get; private set; }
+
+    public double Time { get; private set; }
+
     /// <summary>
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityCalculator(
       Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
-      Dictionary<string, Policy> policies)
+      Dictionary<string, Policy> policies,
+      Dictionary<string, (State, double)> policyIdInitialStateDuration,
+      double time)
     {
       // Deducing the state space from the possible transitions in intensity dictionary
       var allPossibleTransitions = intensities[Gender.Female].Union(intensities[Gender.Male]).ToList();
       stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
       .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
 
-      // Reindexing the intensities to step size
       this.intensities = intensities;
       this.policies = policies;
+      this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
+      this.Time = time;
     }
 
     /// <summary>
@@ -44,7 +51,8 @@ namespace ProjectionSemiMarkov
 
       foreach (var (policyId, v) in policies)
       {
-        var numberOfTimePoints = GetNumberOfTimePoints(v);
+        var (initialState, initialDuration) = PolicyIdInitialStateDuration[policyId];
+        var numberOfTimePoints = GetNumberOfTimePoints(v, Time);
         var stateProbabilities = new Dictionary<State, double[][]>();
 
         foreach (var state in stateSpace)
@@ -52,10 +60,11 @@ namespace ProjectionSemiMarkov
           var arrayOfArray = new double[numberOfTimePoints][];
 
           for (var timeIndex = 0; timeIndex < numberOfTimePoints; timeIndex++)
-            arrayOfArray[timeIndex] = new double[DurationSupportIndex(v.initialDuration, timeIndex) + 1];
+            arrayOfArray[timeIndex] =
+              new double[DurationSupportIndex(initialDuration, timeIndex) + 1];
 
           // Default values of array elements are zero, so we only set probability for last duration to one.
-          arrayOfArray[0][arrayOfArray[0].Length - 1] = state == v.initialState ? 1 : 0;
+          arrayOfArray[0][arrayOfArray[0].Length - 1] = state == initialState ? 1 : 0;
 
           stateProbabilities.Add(state, arrayOfArray);
         }
@@ -78,7 +87,7 @@ namespace ProjectionSemiMarkov
       var numberOfTimePoints = policyProbabilities.First().Value.Length;
       var genderIntensity = intensities[policy.gender];
 
-      // Loop over each time point
+      // Loop over each Time point
       for (var t = 1; t < numberOfTimePoints; t++)
       {
         var durationMaxIndexCur = DurationSupportIndex(policy.initialDuration, t);
@@ -101,10 +110,10 @@ namespace ProjectionSemiMarkov
             for (var u = 1; u <= durationMaxIndexPrev; u++)
             {
               probIntegrals[u + 1] = probIntegrals[u] + (policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])
-                * genderIntensity[l][j](policy.age + policy.initialTime + IndexToTime(t - 0.5),
+                * genderIntensity[l][j](policy.age + Time + IndexToTime(t - 0.5),
                 policy.initialDuration + IndexToTime(u - 0.5)) * stepSize;
 
-              //todo: Should probably not have age in policy. Could consider splitting age and time to allow for more general intesities.
+              //todo: Should probably not have age in policy. Could consider splitting age and Time to allow for more general intesities.
             }
 
             // For j = l, we need to subtract the cumulative integral for each duration

@@ -186,7 +186,7 @@ namespace ProjectionSemiMarkov
 
 
       var policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30,
-        initialState: State.Active, initialTime: 0, initialDuration: 5, payments: payments);
+        initialState: State.Active, initialDuration: 5, payments: payments);
 
       var dicOfPolicies = new Dictionary<string, Policy>
       {

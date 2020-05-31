@@ -26,17 +26,12 @@ namespace ProjectionSemiMarkov
     public readonly double expiryAge;
 
     /// <summary>
-    /// The state at initial time.
+    /// The state at initial Time.
     /// </summary>
     public readonly State initialState;
 
     /// <summary>
-    /// The initial time
-    /// </summary>
-    public readonly double initialTime;
-
-    /// <summary>
-    /// The duration in initial state at initial time.
+    /// The duration in initial state at initial Time.
     /// </summary>
     public readonly double initialDuration;
 
@@ -54,7 +49,6 @@ namespace ProjectionSemiMarkov
       Gender gender,
       double expiryAge,
       State initialState,
-      double initialTime,
       double initialDuration,
       Dictionary<(PaymentStream, Sign), Product> payments)
     {
@@ -66,7 +60,6 @@ namespace ProjectionSemiMarkov
       this.gender = gender;
       this.expiryAge = expiryAge;
       this.initialState = initialState;
-      this.initialTime = initialTime;
       this.initialDuration = initialDuration;
       this.Payments = payments;
     }
