@@ -19,14 +19,26 @@ namespace ProjectionSemiMarkov
     protected IEnumerable<State> stateSpace;
 
     /// <summary>
+    /// A dictionary containing the market intensities.
+    /// </summary>
+    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketIntensities
+      = Setup.CreateMarketBasisIntensities();
+
+    /// <summary>
+    /// A dictionary containing the technical intensities.
+    /// </summary>
+    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> technicalIntensities
+      = Setup.CreateTechnicalBasisIntensities().Item1;
+
+    /// <summary>
     /// A dictionary containing the intensities.
     /// </summary>
-    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities;
+    protected double technicalInterest = Setup.CreateTechnicalBasisIntensities().Item2;
 
     /// <summary>
     /// A mapping from policy id to policy.
     /// </summary>
-    protected Dictionary<string, Policy> policies;
+    protected Dictionary<string, Policy> policies = Setup.CreatePolicies();
 
     /// <summary>
     /// Calculate number of Time points for a policy.

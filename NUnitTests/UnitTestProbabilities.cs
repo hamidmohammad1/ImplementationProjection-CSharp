@@ -59,8 +59,8 @@ namespace NUnitTests
         policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
       var time = 0.0;
 
-      marketProbabilityCalculator = new ProbabilityCalculator(marketBasis, policies, policyIdInitialStateDuration, time);
-      probabilities = marketProbabilityCalculator.Calculate();
+      marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time);
+      probabilities = marketProbabilityCalculator.Calculate(false);
 
       //stateSpace = new [] { State.Active,State.Disabled,State.Dead,State.Surrender,State.FreePolicyActive,
       //  State.FreePolicyDisabled,State.FreePolicyDead,State.FreePolicySurrender, };

@@ -26,18 +26,14 @@ namespace ProjectionSemiMarkov
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityCalculator(
-      Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
-      Dictionary<string, Policy> policies,
       Dictionary<string, (State, double)> policyIdInitialStateDuration,
       double time)
     {
       // Deducing the state space from the possible transitions in intensity dictionary
-      var allPossibleTransitions = intensities[Gender.Female].Union(intensities[Gender.Male]).ToList();
+      var allPossibleTransitions = marketIntensities[Gender.Female].Union(marketIntensities[Gender.Male]).ToList();
       stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
       .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
 
-      this.intensities = intensities;
-      this.policies = policies;
       this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
       this.Time = time;
     }
@@ -72,7 +68,7 @@ namespace ProjectionSemiMarkov
       }
     }
 
-    public Dictionary<string, Dictionary<State, double[][]>> Calculate()
+    public Dictionary<string, Dictionary<State, double[][]>> Calculate(bool calculateRhoProbability)
     {
       AllocateMemoryAndInitialize();
 
@@ -85,7 +81,7 @@ namespace ProjectionSemiMarkov
     {
       var policyProbabilities = Probabilities[policy.policyId];
       var numberOfTimePoints = policyProbabilities.First().Value.Length;
-      var genderIntensity = intensities[policy.gender];
+      var genderIntensity = marketIntensities[policy.gender];
 
       // Loop over each Time point
       for (var t = 1; t < numberOfTimePoints; t++)

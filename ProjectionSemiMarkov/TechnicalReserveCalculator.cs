@@ -14,11 +14,6 @@ namespace ProjectionSemiMarkov
     IEnumerable<State> statesWithReserve => stateSpace.Where(x => x != State.Dead);
 
     /// <summary>
-    /// Technical interest
-    /// </summary>
-    readonly double technicalInterest;
-
-    /// <summary>
     /// A dictionary indexed on <see cref="Policy.policyId"/> and contains technical reserves.
     /// </summary>
     Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalReserve;
@@ -26,20 +21,12 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// Constructing TechnicalReserveCalculator.
     /// </summary>
-    public TechnicalReserveCalculator(
-      Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
-      double technicalInterest,
-      Dictionary<string, Policy> policies)
+    public TechnicalReserveCalculator()
     {
       // Deducing the state space from the possible transitions in intensity dictionary
-      var allPossibleTransitions = intensities[Gender.Female].Union(intensities[Gender.Male]).ToList();
+      var allPossibleTransitions = technicalIntensities[Gender.Female].Union(technicalIntensities[Gender.Male]).ToList();
       this.stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
       .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
-
-      // Reindexing the intensities to step size
-      this.intensities = intensities;
-      this.technicalInterest = technicalInterest;
-      this.policies = policies;
     }
 
     /// <summary>
@@ -90,7 +77,7 @@ namespace ProjectionSemiMarkov
       {
         var contBenefits = policy.Payments[signedPayment].TechnicalContinuousPayment;
         var jumpBenefits = policy.Payments[signedPayment].TechnicalJumpPayment;
-        var genderIntensity = intensities[policy.gender];
+        var genderIntensity = technicalIntensities[policy.gender];
 
         CalculateTechnicalReservePerSignedPayment(
           policy.age, contBenefits, jumpBenefits, stateTechnicalReserve, genderIntensity);
