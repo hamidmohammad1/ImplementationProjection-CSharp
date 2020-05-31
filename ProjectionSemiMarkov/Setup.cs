@@ -9,6 +9,8 @@ namespace ProjectionSemiMarkov
 {
   public static class Setup
   {
+    static double pensionAge = 67.0;
+
     /// <summary>
     /// Creates a nested dictionary indexed first on fromState, secondly toState and thirdly gender
     /// giving intensities as function of age and duration on market basis.
@@ -37,7 +39,7 @@ namespace ProjectionSemiMarkov
 
       // Intensity Active --> FreePolicyActive
       Func<double, double, double> intensityActiveFreePolicyActiveUnisex =
-        (age, duration) => 0.08 * LessThanIndicator(age, 67);
+        (age, duration) => 0.08 * LessThanIndicator(age, pensionAge);
 
       // Intensity Disabled --> Active
       Func<double, double, double> intensityDisabledActiveMen =
@@ -166,44 +168,113 @@ namespace ProjectionSemiMarkov
     /// Creates a dictionary with policies
     /// </summary>
     /// <returns>Dictionary with policies.</returns>
-    public static Dictionary<string, Policy>
-      CreatePolicies()
+    public static Dictionary<string, Policy> CreatePolicies()
     {
       var lifeAnnuityProduct = CreateLifeAnnuity(1000);
-      var policy1Products = new List<Product> { lifeAnnuityProduct };
+      var premiumProduct = CreatePremiumPayment(-200);
+      var deferredDisabilityAnnuity = CreateDeferredDisabilityAnnuity(500);
 
-      var policy1 =
-        new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30, initialState: State.Active,
-          initialTime: 0, initialDuration: 5, originalBenefits: SumProducts(policy1Products), bonusBenefit: lifeAnnuityProduct);
+      var policy1Premium = new List<Product> { premiumProduct };
+      var policy1Benefits = new List<Product> { lifeAnnuityProduct, deferredDisabilityAnnuity };
 
-      var dicOfPolicies = new Dictionary<string, Policy>();
-      dicOfPolicies.Add(policy1.policyId, policy1);
+      var payments = new Dictionary<(PaymentStream, Sign), Product>
+      {
+        { (PaymentStream.Original, Sign.Positive), SumProducts(policy1Benefits) },
+        { (PaymentStream.Original, Sign.Negative), SumProducts(policy1Premium) },
+        { (PaymentStream.Bonus, Sign.Positive), lifeAnnuityProduct }
+      };
+
+
+      var policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30,
+        initialState: State.Active, initialTime: 0, initialDuration: 5, payments: payments);
+
+      var dicOfPolicies = new Dictionary<string, Policy>
+      {
+        { policy1.policyId, policy1 }
+      };
 
       return dicOfPolicies;
     }
 
     /// <summary>
-    /// Creates a life annuity product.
+    /// Creates a life annuity product, pays after age 67 until death
     /// </summary>
     /// <returns>A life annuity product.</returns>
     public static Product CreateLifeAnnuity(double value)
     {
-      Func<double, double> paymentsTechnical = x => GreaterThanIndicator(x, 67) * value;
+      Func<double, double> paymentsTechnical = x => GreaterThanIndicator(x, pensionAge) * value;
       Func<double, double, double> paymentsMarket = (x, y) => paymentsTechnical(x);
 
-      var technicalContinousPayments = new Dictionary<State, Func<double, double>>();
-      technicalContinousPayments.Add(State.Active, paymentsTechnical);
-      technicalContinousPayments.Add(State.Disabled, paymentsTechnical);
+      var technicalContinuousPayments = new Dictionary<State, Func<double, double>>
+      {
+        { State.Active, paymentsTechnical },
+        { State.Disabled, paymentsTechnical }
+      };
 
-      var technicalJumpPayments = new Dictionary<State, Dictionary<State, Func<double, double>>>();
+      var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
+      {
+        { State.Active, paymentsMarket },
+        { State.Disabled, paymentsMarket }
+      };
 
-      var marketContinousPayments = new Dictionary<State, Func<double, double, double>>();
-      marketContinousPayments.Add(State.Active, paymentsMarket);
-      marketContinousPayments.Add(State.Disabled, paymentsMarket);
+      return new Product(technicalContinuousPayments, null, marketContinuousPayments, null,
+        ProductCollection.LifeAnnuity);
+    }
 
-      var marketJumpPayments = new Dictionary<State, Dictionary<State, Func<double, double, double>>>();
+    /// <summary>
+    /// Creates a premium product, paying continuous premium until age 67.
+    /// </summary>
+    /// <returns>A premium product.</returns>
+    public static Product CreatePremiumPayment(double value)
+    {
+      Func<double, double> paymentsTechnical = x => LessThanIndicator(x, pensionAge) * value;
+      Func<double, double, double> paymentsMarket = (x, y) => paymentsTechnical(x);
 
-      return new Product(technicalContinousPayments, technicalJumpPayments, marketContinousPayments, marketJumpPayments);
+      var technicalContinuousPayments = new Dictionary<State, Func<double, double>>
+      {
+        { State.Active, paymentsTechnical },
+        { State.Disabled, paymentsTechnical }
+      };
+
+      var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
+      {
+        { State.Active, paymentsMarket },
+        { State.Disabled, paymentsMarket }
+      };
+
+      return new Product(technicalContinuousPayments, null, marketContinuousPayments, null,
+        ProductCollection.Premium);
+    }
+
+    /// <summary>
+    /// Created a 1-year deferred disability annuity running to pension age or reactivation.
+    /// Possible to get annuity upon many disability.
+    /// </summary>
+    /// <remarks>
+    /// On technical reserve we do not model the duration, so the insured get the payment from entering the
+    /// disability state (often til expiry age due to no reactivation).
+    /// </remarks>
+    /// <returns>A deferred disability annuity.</returns>
+    public static Product CreateDeferredDisabilityAnnuity(double value)
+    {
+      Func<double, double> paymentsTechnical =
+        x => LessThanIndicator(x, pensionAge) * value;
+
+      Func<double, double, double> paymentsMarket =
+        (x, u) => LessThanIndicator(x, pensionAge) * GreaterThanIndicator(u, 1) * value;
+
+      var technicalContinuousPayments = new Dictionary<State, Func<double, double>>
+        {
+          { State.Disabled, paymentsTechnical },
+        };
+
+      var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
+        {
+          { State.Disabled, paymentsMarket }
+        };
+
+      return new Product(technicalContinuousPayments, null, marketContinuousPayments, null,
+        ProductCollection.DeferredDisabilityAnnuity);
     }
   }
 }

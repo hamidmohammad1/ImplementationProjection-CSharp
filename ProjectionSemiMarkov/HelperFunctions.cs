@@ -55,7 +55,8 @@ namespace ProjectionSemiMarkov
         .ToDictionary(x => x.Key, x => x.SelectMany(z => z).GroupBy(z => z.Key, z => z.Value)
           .ToDictionary(y => y.Key, y => (Func<double, double, double>)((k, v) => y.Sum(z => z(k, v)))));
 
-      return new Product(technicalContinousPayment, technicalJumpPayment, marketContinousPayment, marketJumpPayment);
+      return new Product(technicalContinousPayment, technicalJumpPayment, marketContinousPayment, marketJumpPayment,
+        ProductCollection.SumOfProducts);
     }
 
     public static bool TransitionExists<T>(Dictionary<State, Dictionary<State, T>> dicToTest, State fromState, State toState)

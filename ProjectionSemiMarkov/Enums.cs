@@ -19,4 +19,24 @@ namespace ProjectionSemiMarkov
     Male,
     Female,
   }
+
+  public enum ProductCollection
+  {
+    LifeAnnuity,
+    Premium,
+    DeferredDisabilityAnnuity,
+    SumOfProducts,
+  }
+
+  public enum Sign
+  {
+    Negative,
+    Positive,
+  }
+
+  public enum PaymentStream
+  {
+    Original,
+    Bonus,
+  }
 }
