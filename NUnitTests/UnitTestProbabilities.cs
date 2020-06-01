@@ -18,10 +18,11 @@ namespace NUnitTests
     private Policy policy1;
     private Dictionary<string, Policy> policies;
     private Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketBasis;
-    private (Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>>, double) technicalBasis;
-    private IEnumerable<State> stateSpace;
     private ProbabilityCalculator marketProbabilityCalculator;
     private Dictionary<string, Dictionary<State, double[][]>> probabilities;
+    private Dictionary<string, Dictionary<State, double[][]>> rhoProbabilities;
+    private Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalReserves;
+    private Dictionary<string, double[]> freePolicyFactor;
 
     [SetUp]
     public void Setup() //run before each test
@@ -47,23 +48,25 @@ namespace NUnitTests
       {
         { policy1.policyId, policy1 }
       };
-      epsilon = Math.Pow(10, -15);
       marketBasis = CreateMarketBasisIntensities();
-      technicalBasis = CreateTechnicalBasisIntensities();
 
-      var allPossibleTransitions = marketBasis[Gender.Female].Union(marketBasis[Gender.Male]).ToList();
-      stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
-      .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
+      var technicalReserveCalculator = new TechnicalReserveCalculator();
+      technicalReserves = technicalReserveCalculator.Calculate();
 
-      var policyIdInitialStateDuration =
-        policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
+      // Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each Time point
+      freePolicyFactor = technicalReserves
+        .ToDictionary(policy => policy.Key,
+          policy => policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active]
+            .Zip(policy.Value[(PaymentStream.Original, Sign.Negative)][State.Active], (x, y) => x + y)
+            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => y == 0 ? 1.0 : x / y)
+            .ToArray());
+
+      var policyIdInitialStateDuration = policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
       var time = 0.0;
-
-      marketProbabilityCalculator = new ProbabilityCalculator(marketBasis, policies, policyIdInitialStateDuration, time);
-      probabilities = marketProbabilityCalculator.Calculate();
-
-      //stateSpace = new [] { State.Active,State.Disabled,State.Dead,State.Surrender,State.FreePolicyActive,
-      //  State.FreePolicyDisabled,State.FreePolicyDead,State.FreePolicySurrender, };
+      marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time, freePolicyFactor);
+      // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
+      probabilities = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
+      rhoProbabilities = marketProbabilityCalculator.RhoProbabilities;
     }
 
     [Test]
@@ -71,27 +74,8 @@ namespace NUnitTests
     {
       for (var t = 0; t < marketProbabilityCalculator.GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
       {
-        int umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration,t);
-        Assert.That(stateSpace.Sum(j => probabilities[policy1.policyId][j][t][umax]), Is.EqualTo(1.0).Within(epsilon));
-      }
-    }
-
-    [Test]
-    public void FirstFiveProbabilitiesAtUmaxAtActiveAreUnchanged()
-    {
-      var targetProbabilities = new List<double>
-      {
-        1.0,
-        0.98893149449659778,
-        0.97799283951155114,
-        0.96718243333451615,
-        0.95649869488622441
-      };
-
-      for (var t = 0; t < 5; t++)
-      {
-        int umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration,t);
-        Assert.That(probabilities[policy1.policyId][State.Active][t][umax], Is.EqualTo(targetProbabilities[t]).Within(epsilon));
+        var umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration,t);
+        Assert.That(marketProbabilityCalculator.stateSpace.Sum(j => probabilities[policy1.policyId][j][t][umax]), Is.EqualTo(1.0).Within(epsilon));
       }
     }
 
@@ -100,13 +84,7 @@ namespace NUnitTests
     {
       for (var t = 1; t < marketProbabilityCalculator.GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
       {
-        var probabilityList = probabilities[policy1.policyId][State.Active][t].Distinct();
-        var m = 0;
-        foreach(var e in probabilities[policy1.policyId][State.Active][t].Distinct())
-        {
-          m=m+1;
-        }
-        Assert.That(m,Is.Not.EqualTo(1));
+        Assert.That(probabilities[policy1.policyId][State.Active][t].Distinct().Count(), Is.GreaterThan(1));
       }
     }
 
@@ -142,7 +120,7 @@ namespace NUnitTests
         for (var u = 0; u <= umax; u++)
         {
           Assert.That(marketBasis[policy1.gender][State.Active][State.Active](t, u), Is.EqualTo(
-            marketBasis[policy1.gender][State.Active][State.Disabled](t, u) + 
+            marketBasis[policy1.gender][State.Active][State.Disabled](t, u) +
             marketBasis[policy1.gender][State.Active][State.FreePolicyActive](t, u) +
             marketBasis[policy1.gender][State.Active][State.Dead](t, u) +
             marketBasis[policy1.gender][State.Active][State.Surrender](t, u)
@@ -151,5 +129,58 @@ namespace NUnitTests
       }
     }
 
+    [Test]
+    public void RegressionTestForProbabilities()
+    {
+      // Expected last five probabilities
+      var expectedProbabilities = new List<double>
+        {
+          1.0,
+          0.98893149449659778,
+          0.97799283951155114,
+          0.96718243333451615,
+          0.95649869488622441
+        };
+
+      for (var t = 0; t < 5; t++)
+      {
+        var umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, t);
+        Assert.That(probabilities[policy1.policyId][State.Active][t][umax], Is.EqualTo(expectedProbabilities[t]).Within(epsilon));
+      }
+    }
+
+    [Test]
+    public void RegressionTests()
+    {
+      /* USE FOR GETTING EXPECTED REGRESSION VALUE
+      var s1 = technicalReserves[policy1.policyId][(PaymentStream.Original, Sign.Positive)][State.Active];
+      Console.WriteLine(string.Join(", ", s1.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+      Console.WriteLine("--------------------------------------------------------------------------------------------------------------------------------");
+
+      var s2 = freePolicyFactor[policy1.policyId];
+      Console.WriteLine(string.Join(", ", s2.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+      Console.WriteLine("--------------------------------------------------------------------------------------------------------------------------------");
+
+      var s3 = probabilities[policy1.policyId][State.Active][20];
+      Console.WriteLine(string.Join(", ", s3.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+      Console.WriteLine("--------------------------------------------------------------------------------------------------------------------------------");
+
+      var s4 = rhoProbabilities[policy1.policyId][State.FreePolicyActive][20];
+      Console.WriteLine(string.Join(", ", s4.Select(x => x.ToString(CultureInfo.InvariantCulture))));
+      */
+
+      var technicalReservesPolicy1 =
+        technicalReserves[policy1.policyId][(PaymentStream.Original, Sign.Positive)][State.Active];
+      CollectionAssert.AreEqual(TestSourceForRegressionTests.GetExpectedTechnicalValues(), technicalReservesPolicy1);
+
+      var freePolicyFactorPolicy1 = freePolicyFactor[policy1.policyId];
+      CollectionAssert.AreEqual(TestSourceForRegressionTests.GetExpectedFreePolicyValues(), freePolicyFactorPolicy1);
+
+      var probabilitiesPolicy1 = probabilities[policy1.policyId][State.Active][20];
+      CollectionAssert.AreEqual(TestSourceForRegressionTests.GetExpectedProbabilities(), probabilitiesPolicy1);
+
+      var rhoModifiedProbabilitiesPolicy1 = rhoProbabilities[policy1.policyId][State.FreePolicyActive][20];
+      CollectionAssert.AreEqual(TestSourceForRegressionTests.GetExpectedRhoProbabilities(), rhoModifiedProbabilitiesPolicy1);
+    }
   }
 }
