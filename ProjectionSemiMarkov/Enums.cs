@@ -14,6 +14,16 @@ namespace ProjectionSemiMarkov
     FreePolicySurrender,
   }
 
+  public enum StateCollection
+  {
+    Standard,
+    StandardWithSurrender,
+    FreePolicyStates,
+    FreePolicyStatesWithSurrender,
+    RhoModifiedFromStates,
+    AllStates,
+  }
+
   public enum Gender
   {
     Male,

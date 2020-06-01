@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+
+using static ProjectionSemiMarkov.HelperFunctions;
 
 namespace ProjectionSemiMarkov
 {
@@ -16,25 +17,25 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// A dictionary indexed on <see cref="Policy.policyId"/> and contains technical reserves.
     /// </summary>
-    Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalReserve;
+    public Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> TechnicalReserve
+    { get; private set; }
 
     /// <summary>
     /// Constructing TechnicalReserveCalculator.
     /// </summary>
     public TechnicalReserveCalculator()
     {
-      // Deducing the state space from the possible transitions in intensity dictionary
       var allPossibleTransitions = technicalIntensities[Gender.Female].Union(technicalIntensities[Gender.Male]).ToList();
       this.stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
-      .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
+        .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
     }
 
     /// <summary>
-    /// Allocating memory for arrays inside <see cref="technicalReserve"/>.
+    /// Allocating memory for arrays inside <see cref="TechnicalReserve"/>.
     /// </summary>
     private void AllocateMemoryAndInitialize()
     {
-      technicalReserve = new Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>>();
+      TechnicalReserve = new Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>>();
 
       foreach (var (policyId, v) in policies)
       {
@@ -56,7 +57,7 @@ namespace ProjectionSemiMarkov
           comStateTechnicalReserve.Add(comb, stateTechnicalReserve);
         }
 
-        technicalReserve.Add(policyId, comStateTechnicalReserve);
+        TechnicalReserve.Add(policyId, comStateTechnicalReserve);
       }
     }
 
@@ -66,12 +67,12 @@ namespace ProjectionSemiMarkov
 
       Parallel.ForEach(policies, policy => CalculateTechnicalReservePerPolicy(policy.Value));
 
-      return technicalReserve;
+      return TechnicalReserve;
     }
 
     private void CalculateTechnicalReservePerPolicy(Policy policy)
     {
-      var stateTechnicalReserves = technicalReserve[policy.policyId];
+      var stateTechnicalReserves = TechnicalReserve[policy.policyId];
 
       foreach (var (signedPayment, stateTechnicalReserve) in stateTechnicalReserves)
       {
@@ -84,7 +85,7 @@ namespace ProjectionSemiMarkov
       }
     }
 
-    public void CalculateTechnicalReservePerSignedPayment(
+    private void CalculateTechnicalReservePerSignedPayment(
       double policyAge,
       Dictionary<State, Func<double, double>> contBenefits,
       Dictionary<State, Dictionary<State, Func<double, double>>> jumpBenefits,
@@ -113,9 +114,9 @@ namespace ProjectionSemiMarkov
           // handling    sum_(k != j) mu_jk(t_n') (b_jk(t_n') + V_k(t_n))
           foreach (var toState in stateSpace.Where(x => x != soJournState))
           {
-            if (HelperFunctions.TransitionExists(genderIntensity, soJournState, toState))
+            if (TransitionExists(genderIntensity, soJournState, toState))
             {
-              if (HelperFunctions.TransitionExists(jumpBenefits, soJournState, toState))
+              if (TransitionExists(jumpBenefits, soJournState, toState))
                 stateTechnicalReserve[soJournState][i] +=
                   (stateTechnicalReserve[toState][i] + jumpBenefits[soJournState][toState](time))
                                                          * genderIntensity[soJournState][toState](time, 0);
@@ -129,7 +130,46 @@ namespace ProjectionSemiMarkov
             stateTechnicalReserve[soJournState][i] * stepSize + stateTechnicalReserve[soJournState][i + 1];
         }
       }
+    }
 
+    /// <summary>
+    /// Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each time point
+    /// </summary>
+    public Dictionary<string, double[]> CalculateFreePolicyFactor()
+    {
+      return TechnicalReserve
+        .ToDictionary(policy => policy.Key,
+          policy => policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active]
+            .Zip(policy.Value[(PaymentStream.Original, Sign.Negative)][State.Active], (x, y) => x + y)
+            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => y == 0 ? 1.0 : x / y)
+            .ToArray());
+    }
+
+    /// <summary>
+    /// Calculate and return the technical reserves.
+    /// </summary>
+    public (Dictionary<string, Dictionary<State, List<double>>> OriginalTechnicalReserves,
+      Dictionary<string, Dictionary<State, List<double>>> OriginalTechnicalPositiveReserves,
+      Dictionary<string, Dictionary<State, double[]>> BonusTechnicalReserves)
+      CalculateTechnicalReserve()
+    {
+      var standardStates = GiveCollectionOfStates(StateCollection.Standard);
+
+      var originalTechReserves = TechnicalReserve
+        .ToDictionary(x => x.Key, x => standardStates.ToDictionary(
+          y => y,
+          y => x.Value[(PaymentStream.Original, Sign.Positive)][y]
+            .Zip(x.Value[(PaymentStream.Original, Sign.Negative)][y], (a, b) => (a + b))
+            .ToList()));
+
+      var originalTechPositiveReserves = TechnicalReserve
+        .ToDictionary(x => x.Key, x => standardStates.ToDictionary(
+          y => y, y => x.Value[(PaymentStream.Original, Sign.Positive)][y].ToList()));
+
+      var bonusTechnicalReserves = TechnicalReserve
+        .ToDictionary(x => x.Key, x => x.Value[(PaymentStream.Original, Sign.Positive)]);
+
+      return (originalTechReserves, originalTechPositiveReserves, bonusTechnicalReserves);
     }
   }
 }

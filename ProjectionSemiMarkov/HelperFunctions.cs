@@ -67,5 +67,55 @@ namespace ProjectionSemiMarkov
 
       return false;
     }
+
+    public static State ConvertToStandardState(State state)
+    {
+      switch (state)
+      {
+        case State.FreePolicyActive:
+          return State.Active;
+
+        case State.FreePolicyDisabled:
+          return State.Disabled;
+
+        case State.FreePolicyDead:
+          return State.Dead;
+
+        case State.FreePolicySurrender:
+          return State.Surrender;
+
+        default:
+          throw new InvalidOperationException("Argument is not a not a free policy state");
+      }
+    }
+
+    public static List<State> GiveCollectionOfStates(StateCollection collection)
+    {
+      switch (collection)
+      {
+        case StateCollection.Standard:
+          return new List<State> { State.Active, State.Dead, State.Disabled };
+
+        case StateCollection.StandardWithSurrender:
+          return new List<State> { State.Active, State.Dead, State.Disabled, State.Surrender };
+
+        case StateCollection.FreePolicyStates:
+          return new List<State> { State.FreePolicyActive, State.FreePolicyDead, State.FreePolicyDisabled };
+
+        case StateCollection.FreePolicyStatesWithSurrender:
+          return new List<State> { State.FreePolicyActive, State.FreePolicyDead, State.FreePolicyDisabled,
+            State.FreePolicySurrender };
+
+        case StateCollection.RhoModifiedFromStates:
+          return new List<State> { State.Active, State.Disabled };
+
+        case StateCollection.AllStates:
+          return new List<State> { State.Active, State.Disabled, State.Dead, State.Surrender, State.FreePolicyActive,
+            State.FreePolicyDead, State.FreePolicyDisabled, State.FreePolicySurrender };
+
+        default:
+          throw new InvalidOperationException("Argument is not valid");
+      }
+    }
   }
 }

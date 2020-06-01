@@ -7,46 +7,31 @@ namespace ProjectionSemiMarkov
 {
   public class ProbabilityQCalculator : Calculator
   {
-    /// <summary>
-    /// A dictionary indexed on <see cref="Policy.policyId"/> and contains the semi-markov Probabilities.
-    /// </summary>
-    /// <remarks>
-    /// Given a <c>policyId</c>, a <c>state</c>, a <c>timePoint</c>, a <c>duration</c>, then
-    /// Probabilities[policyId][state][timePoint][duration] is the probability
-    /// p_{z0,state}(initialTime, (timePoint - 1)*stepSize, initialDuration, (duration - 1)*stepSize)
-    /// The z0, initialTime and initialDuration is found on the policy, see mapping <see cref="policies"/>.
-    /// </remarks>
-    public Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; private set; }
-
+    public Dictionary<string, Dictionary<State, double[][]>> QProbabilities { get; private set; }
     public Dictionary<string, (State, double)> PolicyIdInitialStateDuration { get; private set; }
-
     public double Time { get; private set; }
-    public Dictionary<double,double> rStar { get; private set; } 
-    public Dictionary<double,double> r { get; private set; }
-    public double pi1 { get; private set; } 
+    public Dictionary<double, double> rStar { get; private set; }
+    public Dictionary<double, double> r { get; private set; }
+    public double pi1 { get; private set; }
     public double pi2 { get; private set; }
-    Dictionary<string, Dictionary<State, double[][]>> probabilities { get;}
-    Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalreserves { get;}
+    Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; }
+    Dictionary<string, Dictionary<State, double[]>> TechnicalReserves { get; }
 
     /// <summary>
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityQCalculator(
-      Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
-      Dictionary<string, Policy> policies,
       Dictionary<string, (State, double)> policyIdInitialStateDuration,
       double time,
       Dictionary<string, Dictionary<State, double[][]>> probabilities,
-      Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalreserves
+      Dictionary<string, Dictionary<State, double[]>> technicalReserves
       )
     {
       // Deducing the state space from the possible transitions in intensity dictionary
-      var allPossibleTransitions = intensities[Gender.Female].Union(intensities[Gender.Male]).ToList();
+      var allPossibleTransitions = marketIntensities[Gender.Female].Union(marketIntensities[Gender.Male]).ToList();
       stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
       .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
 
-      this.intensities = intensities;
-      this.policies = policies;
       this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
       this.Time = time;
 
@@ -56,8 +41,8 @@ namespace ProjectionSemiMarkov
       this.pi1 = pi1;
       this.pi2 = pi2;
 
-      this.probabilities = probabilities;
-      this.technicalreserves = technicalreserves;
+      this.Probabilities = probabilities;
+      this.TechnicalReserves = technicalReserves;
     }
 
     /// <summary>
@@ -65,7 +50,7 @@ namespace ProjectionSemiMarkov
     /// </summary>
     private void AllocateMemoryAndInitialize()
     {
-      Probabilities = new Dictionary<string, Dictionary<State, double[][]>>();
+      QProbabilities = new Dictionary<string, Dictionary<State, double[][]>>();
 
       foreach (var (policyId, v) in policies)
       {
@@ -98,17 +83,15 @@ namespace ProjectionSemiMarkov
 
       Parallel.ForEach(policies, policy => ProbabilityQCalculatePerPolicy(policy.Value));
 
-      return(Probabilities);
-    }  
+      return (Probabilities);
+    }
 
-    public void ProbabilityQCalculatePerPolicy(Policy policy) 
+    public void ProbabilityQCalculatePerPolicy(Policy policy)
     {
-      var technicalreserves = new double[][];
-
       var policyProbabilities = Probabilities[policy.policyId];
       var policyQProbabilities = Probabilities[policy.policyId];
       var numberOfTimePoints = policyProbabilities.First().Value.Length;
-      var genderIntensity = intensities[policy.gender];
+      var genderIntensity = marketIntensities[policy.gender];
 
       // Loop over each Time point
       for (var t = 1; t < numberOfTimePoints; t++)

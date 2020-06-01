@@ -38,7 +38,7 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// A mapping from policy id to policy.
     /// </summary>
-    protected Dictionary<string, Policy> policies = Setup.CreatePolicies();
+    public Dictionary<string, Policy> policies = Setup.CreatePolicies();
 
     /// <summary>
     /// Calculate number of Time points for a policy.
