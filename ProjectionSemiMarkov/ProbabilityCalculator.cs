@@ -8,7 +8,7 @@ namespace ProjectionSemiMarkov
   public class ProbabilityCalculator : Calculator
   {
     /// <summary>
-    /// A dictionary indexed on <see cref="Policy.policyId"/> and contains the semi-markov Probabilities.
+    /// A dictionary indexed on <see cref="Policy.policyId"/> and contains the Q-modified semi-markov Probabilities.
     /// </summary>
     /// <remarks>
     /// Given a <c>policyId</c>, a <c>state</c>, a <c>timePoint</c>, a <c>duration</c>, then
@@ -76,13 +76,15 @@ namespace ProjectionSemiMarkov
     {
       AllocateMemoryAndInitialize();
 
-      Parallel.ForEach(policies, policy => ProbabilityCalculatePerPolicy(policy.Value));
+      Parallel.ForEach(policies, policy => ProbabilityQCalculatePerPolicy(policy.Value));
 
       return(Probabilities);
     }
 
-    public void ProbabilityCalculatePerPolicy(Policy policy)
+    public void ProbabilityQCalculatePerPolicy(Policy policy)
     {
+      var contDividends = new Dictionary<Gender,Dictionary<State,Dictionary<double[][],double[][]>>>(); //gender,state,(t,u) -> 
+      
       var policyProbabilities = Probabilities[policy.policyId];
       var numberOfTimePoints = policyProbabilities.First().Value.Length;
       var genderIntensity = intensities[policy.gender];

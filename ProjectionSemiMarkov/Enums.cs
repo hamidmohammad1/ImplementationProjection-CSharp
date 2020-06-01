@@ -39,4 +39,12 @@ namespace ProjectionSemiMarkov
     Original,
     Bonus,
   }
+
+  public enum DividendType
+  {
+    Continuous0,
+    Continuous1,
+    Jump0,
+    Jump1
+  }
 }

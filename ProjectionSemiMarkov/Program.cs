@@ -27,6 +27,9 @@ namespace ProjectionSemiMarkov
       var technicalReserveCalculator = new TechnicalReserveCalculator(technicalBasis.Item1, technicalBasis.Item2, policies);
       var techReserves = technicalReserveCalculator.Calculate();
 
+      var marketProbabilityQCalculator = new ProbabilityQCalculator(marketBasis, policies, policyIdInitialStateDuration, time,marketProb,techReserves);
+      var marketProbQ = marketProbabilityQCalculator.Calculate();
+
       // Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each Time point
       var freePolicyFactor = techReserves
         .ToDictionary(policy => policy.Key,
