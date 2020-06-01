@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -13,18 +12,7 @@ namespace ProjectionSemiMarkov
       var stopWatch = new Stopwatch();
       stopWatch.Start();
 
-      var marketBasis = Setup.CreateMarketBasisIntensities();
-      var technicalBasis = Setup.CreateTechnicalBasisIntensities();
-      var policies = Setup.CreatePolicies();
-
-      var policyIdInitialStateDuration =
-        policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
-      var time = 0.0;
-
-      var marketProbabilityCalculator = new ProbabilityCalculator(marketBasis, policies, policyIdInitialStateDuration, time);
-      var marketProb = marketProbabilityCalculator.Calculate();
-
-      var technicalReserveCalculator = new TechnicalReserveCalculator(technicalBasis.Item1, technicalBasis.Item2, policies);
+      var technicalReserveCalculator = new TechnicalReserveCalculator();
       var techReserves = technicalReserveCalculator.Calculate();
 
       var marketProbabilityQCalculator = new ProbabilityQCalculator(marketBasis, policies, policyIdInitialStateDuration, time,marketProb,techReserves);
@@ -35,7 +23,17 @@ namespace ProjectionSemiMarkov
         .ToDictionary(policy => policy.Key,
           policy => policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active]
             .Zip(policy.Value[(PaymentStream.Original, Sign.Negative)][State.Active], (x, y) => x + y)
-            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => x / y));
+            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => y == 0 ? 1.0 : x / y)
+            .ToArray());
+
+      var policies = Setup.CreatePolicies();
+      var policyIdInitialStateDuration =
+        policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
+      var time = 0.0;
+      var marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time, freePolicyFactor);
+
+      // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
+      var marketProb = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
 
       stopWatch.Stop();
       var timeInSeconds = stopWatch.ElapsedMilliseconds;
