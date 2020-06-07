@@ -32,22 +32,22 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// The free policy factor.
     /// </summary>
-    public Dictionary<string, double[]> FreePolicyFactor { get; private set; }
+    public readonly Dictionary<string, double[]> FreePolicyFactor;
 
     /// <summary>
     /// The original technical reserves.
     /// </summary>
-    public Dictionary<string, Dictionary<State, List<double>>> OriginalTechReserves { get; private set; }
+    public readonly Dictionary<string, Dictionary<State, List<double>>> OriginalTechReserves;
 
     /// <summary>
     /// The original positive technical reserves.
     /// </summary>
-    public Dictionary<string, Dictionary<State, List<double>>> OriginalPositiveTechReserves { get; private set; }
+    public readonly Dictionary<string, Dictionary<State, List<double>>> OriginalPositiveTechReserves;
 
     /// <summary>
     /// The original bonus technical reserves.
     /// </summary>
-    public Dictionary<string, Dictionary<State, double[]>> BonusTechReserves { get; private set; }
+    public readonly Dictionary<string, Dictionary<State, double[]>> BonusTechReserves;
 
     /// <summary>
     /// Constructing ProbabilityCalculator.

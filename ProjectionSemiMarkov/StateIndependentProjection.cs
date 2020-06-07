@@ -6,22 +6,36 @@ namespace ProjectionSemiMarkov
 {
   class StateIndependentProjection
   {
+    /// <summary>
+    /// The projection Input
+    /// </summary>
     public ProjectionInput Input { get; private set; }
 
-    public StateIndependentProjection(ProjectionInput input, string ecoScenario)
+    /// <summary>
+    /// The economic scenario
+    /// </summary>
+    public Dictionary<Assets, double[]> EconomicScenario { get; private set; }
+
+    /// <summary>
+    /// A function calculating zero coupon bond prices for r(t), time t and maturity T
+    /// </summary>
+    public Func<double, double, double, double> ZeroCouponBondPriceFunc { get; private set; }
+
+    /// <summary>
+    /// Constructs a instance of StateIndependentProjection.
+    /// </summary>
+    public StateIndependentProjection(
+      ProjectionInput input,
+      Dictionary<Assets, double[]> ecoScenario,
+      Func<double, double, double, double> zeroCouponBondPriceFunc)
     {
       this.Input = input;
-      SetEconomicScenario(ecoScenario);
-    }
-
-    private void SetEconomicScenario(string ecoScenario)
-    {
-
+      this.EconomicScenario = ecoScenario;
+      this.ZeroCouponBondPriceFunc = zeroCouponBondPriceFunc;
     }
 
     public void Project()
     {
-
     }
 
     public void ProjectPerEconomicScenario()

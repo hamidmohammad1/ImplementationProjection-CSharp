@@ -54,6 +54,11 @@ namespace ProjectionSemiMarkov
       x => x.Key,
       x => (x.Value.initialState, x.Value.initialDuration));
 
+    /// <summary>
+    /// The time zero duration and state for each policy.
+    /// </summary>
+    public double LastExpiryTime => policies.Max(x => x.Value.expiryAge);
+
     /// Calculate number of Time points for a policy.
     /// </summary>
     public int GetNumberOfTimePoints(Policy policy, double time)

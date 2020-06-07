@@ -39,11 +39,11 @@ namespace ProjectionSemiMarkov
             (PaymentStream.Bonus, Sign.Positive),
           };
 
-
         foreach (var comb in combs)
         {
           var stateTechnicalReserve = new Dictionary<State, double[]>();
-          MarketStateSpace.ToList().ForEach(state => stateTechnicalReserve.Add(state, new double[numberOfTimePoints]));
+          MarketStateSpace.ToList()
+            .ForEach(state => stateTechnicalReserve.Add(state, new double[numberOfTimePoints]));
           comStateTechnicalReserve.Add(comb, stateTechnicalReserve);
         }
 

@@ -11,16 +11,17 @@ namespace ProjectionSemiMarkov
       var stopWatch = new Stopwatch();
       stopWatch.Start();
 
-      //TODO implement a economic scenario generator or read from Hemo R-file
-      var ecoSencarios = new List<string> { "scen1", "scen2", "scen2" };
+      var ecoScenarioGenerator = new EconomicScenarioGenerator();
+      var projectionInput = new ProjectionInput(); //TODO MAKE THE CASH FLOWS GREAT AGAIN!
 
-      //TODO MAKE THE CASH FLOWS GREAT AGAIN!
-      var projectionInput = new ProjectionInput();
-
-      foreach (var ecoScenario in ecoSencarios)
+      for (var i = 0; i < 1; i++)
       {
-        var stateIndependentProjection = new StateIndependentProjection(projectionInput, ecoScenario);
+        var stateIndependentProjection = new StateIndependentProjection(
+          projectionInput,
+          ecoScenarioGenerator.SimulateMarket(),
+          (r, t, T) => ecoScenarioGenerator.ZeroCouponBondPrices(r, t, T));
 
+        stateIndependentProjection.Project();
       }
 
       stopWatch.Stop();

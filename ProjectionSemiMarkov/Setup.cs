@@ -184,7 +184,7 @@ namespace ProjectionSemiMarkov
         { (PaymentStream.Bonus, Sign.Positive), lifeAnnuityProduct }
       };
 
-      var policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30,
+      var policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 90,
         initialState: State.Active, initialDuration: 5, payments: payments);
 
       var dicOfPolicies = new Dictionary<string, Policy>
