@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace ProjectionSemiMarkov
@@ -10,7 +11,17 @@ namespace ProjectionSemiMarkov
       var stopWatch = new Stopwatch();
       stopWatch.Start();
 
-      var projectionInput = new Projection();
+      //TODO implement a economic scenario generator or read from Hemo R-file
+      var ecoSencarios = new List<string> { "scen1", "scen2", "scen2" };
+
+      //TODO MAKE THE CASH FLOWS GREAT AGAIN!
+      var projectionInput = new ProjectionInput();
+
+      foreach (var ecoScenario in ecoSencarios)
+      {
+        var stateIndependentProjection = new StateIndependentProjection(projectionInput, ecoScenario);
+
+      }
 
       stopWatch.Stop();
       var timeInSeconds = stopWatch.ElapsedMilliseconds;

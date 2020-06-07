@@ -12,13 +12,13 @@ namespace ProjectionSemiMarkov
     static double pensionAge = 67.0;
 
     /// <summary>
-    /// Creates a nested dictionary indexed first on fromState, secondly toState and thirdly gender
-    /// giving intensities as function of age and duration on market basis.
-    /// </summary>
-    /// market interest from FT 5/25/2020 cf.
-    /// https://www.finanstilsynet.dk/tal-og-fakta/oplysninger-for-virksomheder/oplysningstal-om-forsikring-og-pension/diskonteringssatser
-    /// <returns>Nested dictionaries containing function of doubles to doubles.</returns>
-    public static Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>>
+      /// Creates a nested dictionary indexed first on fromState, secondly toState and thirdly gender
+      /// giving intensities as function of age and duration on market basis.
+      /// </summary>
+      /// market interest from FT 5/25/2020 cf.
+      /// https://www.finanstilsynet.dk/tal-og-fakta/oplysninger-for-virksomheder/oplysningstal-om-forsikring-og-pension/diskonteringssatser
+      /// <returns>Nested dictionaries containing function of doubles to doubles.</returns>
+      public static Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>>
       CreateMarketBasisIntensities()
     {
       // Intensity Active --> Disabled
@@ -236,8 +236,7 @@ namespace ProjectionSemiMarkov
         { State.Disabled, paymentsTechnical }
       };
 
-      return new Product(technicalContinuousPayments, null, null, null,
-        ProductCollection.Premium);
+      return new Product(technicalContinuousPayments, null, null, null, ProductCollection.Premium);
     }
 
     /// <summary>

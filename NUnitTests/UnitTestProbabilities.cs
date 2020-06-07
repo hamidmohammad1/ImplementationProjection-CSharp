@@ -59,9 +59,8 @@ namespace NUnitTests
       // Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each Time point
       freePolicyFactor = technicalReserveCalculator.CalculateFreePolicyFactor();
 
-      var policyIdInitialStateDuration = policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
-      marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time: 0.0, freePolicyFactor,
-        originalTechReserves, originalTechPositiveReserves);
+      marketProbabilityCalculator = new ProbabilityCalculator(time: 0.0, freePolicyFactor,
+        originalTechReserves, originalTechPositiveReserves, bonusTechnicalReserves);
 
       // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
       probabilities = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
@@ -74,7 +73,7 @@ namespace NUnitTests
       for (var t = 0; t < marketProbabilityCalculator.GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
       {
         var umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration,t);
-        Assert.That(marketProbabilityCalculator.stateSpace.Sum(j => probabilities[policy1.policyId][j][t][umax]), Is.EqualTo(1.0).Within(epsilon));
+        Assert.That(marketProbabilityCalculator.MarketStateSpace.Sum(j => probabilities[policy1.policyId][j][t][umax]), Is.EqualTo(1.0).Within(epsilon));
       }
     }
 

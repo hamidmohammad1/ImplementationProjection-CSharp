@@ -12,23 +12,13 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// States with reserve
     /// </summary>
-    IEnumerable<State> statesWithReserve => stateSpace.Where(x => x != State.Dead);
+    IEnumerable<State> technicalStatesWithReserve => TechnicalStateSpace.Where(x => x != State.Dead);
 
     /// <summary>
     /// A dictionary indexed on <see cref="Policy.policyId"/> and contains technical reserves.
     /// </summary>
     public Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> TechnicalReserve
     { get; private set; }
-
-    /// <summary>
-    /// Constructing TechnicalReserveCalculator.
-    /// </summary>
-    public TechnicalReserveCalculator()
-    {
-      var allPossibleTransitions = technicalIntensities[Gender.Female].Union(technicalIntensities[Gender.Male]).ToList();
-      this.stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
-        .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
-    }
 
     /// <summary>
     /// Allocating memory for arrays inside <see cref="TechnicalReserve"/>.
@@ -53,7 +43,7 @@ namespace ProjectionSemiMarkov
         foreach (var comb in combs)
         {
           var stateTechnicalReserve = new Dictionary<State, double[]>();
-          stateSpace.ToList().ForEach(state => stateTechnicalReserve.Add(state, new double[numberOfTimePoints]));
+          MarketStateSpace.ToList().ForEach(state => stateTechnicalReserve.Add(state, new double[numberOfTimePoints]));
           comStateTechnicalReserve.Add(comb, stateTechnicalReserve);
         }
 
@@ -102,7 +92,7 @@ namespace ProjectionSemiMarkov
         // = V(t_n) - ( (r* + mu_(j,dot)(t_n') V_j(t_n) - b_j(t_n')
         //            - sum_(k != j) mu_jk(t_n') (b_jk(t_n') + V_k(t_n)) ) * (t_n - t_(n-1))
 
-        foreach (var soJournState in statesWithReserve)
+        foreach (var soJournState in technicalStatesWithReserve)
         {
           var time = policyAge + IndexToTime(i + 0.5);
 
@@ -112,7 +102,7 @@ namespace ProjectionSemiMarkov
             - (technicalInterest + genderIntensity[soJournState][soJournState](time, 0.0)) * stateTechnicalReserve[soJournState][i + 1];
 
           // handling    sum_(k != j) mu_jk(t_n') (b_jk(t_n') + V_k(t_n))
-          foreach (var toState in stateSpace.Where(x => x != soJournState))
+          foreach (var toState in MarketStateSpace.Where(x => x != soJournState))
           {
             if (TransitionExists(genderIntensity, soJournState, toState))
             {

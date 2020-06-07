@@ -16,52 +16,27 @@ namespace ProjectionSemiMarkov
     /// p_{z0,state}(initialTime, (timePoint - 1)*stepSize, initialDuration, (duration - 1)*stepSize)
     /// The z0, initialTime and initialDuration is found on the policy, see mapping <see cref="policies"/>.
     /// </remarks>
-    public Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; private set; }
-
-    public Dictionary<string, (State, double)> PolicyIdInitialStateDuration { get; private set; }
+    public Dictionary<string, Dictionary<State, double[][]>> QProbabilities { get; private set; }
 
     public double Time { get; private set; }
-    public Dictionary<double,double> rStar { get; private set; } 
+    public Dictionary<double,double> rStar { get; private set; }
     public Dictionary<double,double> r { get; private set; }
-    public double pi1 { get; private set; } 
+    public double pi1 { get; private set; }
     public double pi2 { get; private set; }
-    Dictionary<string, Dictionary<State, double[][]>> probabilities { get;}
-    Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalreserves { get;}
+    Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; }
 
-    /// <summary>
-    /// A dictionary containing the market intensities.
-    /// </summary>
-    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketIntensities
-      = Setup.CreateMarketBasisIntensities();
-
-    /// <summary>
-    /// A dictionary containing the technical intensities.
-    /// </summary>
-    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> technicalIntensities
-      = Setup.CreateTechnicalBasisIntensities().Item1;
+    Dictionary<string, Dictionary<State, double[]>> TechnicalReserves { get; }
 
     /// <summary>
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityQCalculator(
-      //Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
-      Dictionary<string, Policy> policies,
-      Dictionary<string, (State, double)> policyIdInitialStateDuration,
       double time,
       Dictionary<string, Dictionary<State, double[][]>> probabilities,
       Dictionary<string, Dictionary<State, double[]>> technicalReserves
       )
     {
-      // Deducing the state space from the possible transitions in intensity dictionary
-      var allPossibleTransitions = marketIntensities[Gender.Female].Union(marketIntensities[Gender.Male]).ToList();
-      stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
-      .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
-
       //todo - is imported correctly!!?
-      this.marketIntensities = marketIntensities;
-      this.technicalIntensities = technicalIntensities;
-      this.policies = policies;
-      this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
       this.Time = time;
 
       //todo - import!! (need r and r^* as input, as well as pi_1 and pi_2)
@@ -87,7 +62,7 @@ namespace ProjectionSemiMarkov
         var numberOfTimePoints = GetNumberOfTimePoints(v, Time);
         var stateProbabilities = new Dictionary<State, double[][]>();
 
-        foreach (var state in stateSpace)
+        foreach (var state in MarketStateSpace)
         {
           var arrayOfArray = new double[numberOfTimePoints][];
 
@@ -115,7 +90,7 @@ namespace ProjectionSemiMarkov
 
     public void ProbabilityQCalculatePerPolicy(Policy policy)
     {
-      var policyProbabilities = probabilities[policy.policyId];
+      var policyProbabilities = Probabilities[policy.policyId];
       var policyQProbabilities = Probabilities[policy.policyId];
       var numberOfTimePoints = policyQProbabilities.First().Value.Length;
       var genderMarketIntensity = marketIntensities[policy.gender];
@@ -134,7 +109,7 @@ namespace ProjectionSemiMarkov
         var probIntegrals = new double[durationMaxIndexCur + 1];
 
         // Loop over j in p_{z0,j}(...)
-        foreach (var j in stateSpace)
+        foreach (var j in MarketStateSpace)
         {
           // Loop over l in Kolmogorov forward integro-differential equations (Prob. mass going in)
           foreach (var l in genderMarketIntensity.Keys)

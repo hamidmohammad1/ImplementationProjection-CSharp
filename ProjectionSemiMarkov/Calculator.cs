@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using static ProjectionSemiMarkov.HelperFunctions;
 
 
@@ -14,11 +16,6 @@ namespace ProjectionSemiMarkov
     protected readonly double stepSize = 1.0 / 12.0;
 
     /// <summary>
-    /// The state space. It is a subset of <see cref="State"/>.
-    /// </summary>
-    public IEnumerable<State> stateSpace { get; internal set; }
-
-    /// <summary>
     /// A dictionary containing the market intensities.
     /// </summary>
     protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketIntensities
@@ -31,6 +28,16 @@ namespace ProjectionSemiMarkov
       = Setup.CreateTechnicalBasisIntensities().Item1;
 
     /// <summary>
+    /// A list of possible states in market basis.
+    /// </summary>
+    public IEnumerable<State> MarketStateSpace => GiveStateSpaceFromIntensities(marketIntensities);
+
+    /// <summary>
+    /// A list of possible states in technical basis.
+    /// </summary>
+    public IEnumerable<State> TechnicalStateSpace => GiveStateSpaceFromIntensities(technicalIntensities);
+
+    /// <summary>
     /// A dictionary containing the intensities.
     /// </summary>
     protected double technicalInterest = Setup.CreateTechnicalBasisIntensities().Item2;
@@ -41,13 +48,19 @@ namespace ProjectionSemiMarkov
     public Dictionary<string, Policy> policies = Setup.CreatePolicies();
 
     /// <summary>
+    /// The time zero duration and state for each policy.
+    /// </summary>
+    public Dictionary<string, (State, double)> PolicyIdInitialStateDuration => policies.ToDictionary(
+      x => x.Key,
+      x => (x.Value.initialState, x.Value.initialDuration));
+
     /// Calculate number of Time points for a policy.
     /// </summary>
     public int GetNumberOfTimePoints(Policy policy, double time)
     {
       // We assume the last Time and ages are at the form stepSize * n for some n.
       // We are adding one, to allocate for a Time 0.
-      var value = (policy.expiryAge - policy.age - time) / stepSize + 1;
+      var value = (policy.expiryAge - time) / stepSize + 1;
       if (!doubleIsInteger(value))
         throw new ArgumentException("Either expiry age or age is not a multiply of step size", policy.policyId);
       if (value <= 0)
