@@ -15,9 +15,6 @@ namespace ProjectionSemiMarkov
       var technicalReserveCalculator = new TechnicalReserveCalculator();
       var techReserves = technicalReserveCalculator.Calculate();
 
-      var marketProbabilityQCalculator = new ProbabilityQCalculator(marketBasis, policies, policyIdInitialStateDuration, time,marketProb,techReserves);
-      var marketProbQ = marketProbabilityQCalculator.Calculate();
-
       // Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each Time point
       var freePolicyFactor = techReserves
         .ToDictionary(policy => policy.Key,
@@ -33,7 +30,11 @@ namespace ProjectionSemiMarkov
       var marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time, freePolicyFactor);
 
       // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
-      var marketProb = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
+      var marketProbRho = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
+      var marketProb = marketProbabilityCalculator.Calculate(calculateRhoProbability: false);
+
+      var marketProbabilityQCalculator = new ProbabilityQCalculator(policies, policyIdInitialStateDuration, time,marketProb,techReserves);
+      var marketProbQ = marketProbabilityQCalculator.Calculate();
 
       stopWatch.Stop();
       var timeInSeconds = stopWatch.ElapsedMilliseconds;

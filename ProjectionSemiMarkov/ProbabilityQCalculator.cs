@@ -29,10 +29,22 @@ namespace ProjectionSemiMarkov
     Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalreserves { get;}
 
     /// <summary>
+    /// A dictionary containing the market intensities.
+    /// </summary>
+    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketIntensities
+      = Setup.CreateMarketBasisIntensities();
+
+    /// <summary>
+    /// A dictionary containing the technical intensities.
+    /// </summary>
+    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> technicalIntensities
+      = Setup.CreateTechnicalBasisIntensities().Item1;
+
+    /// <summary>
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityQCalculator(
-      Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
+      //Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities,
       Dictionary<string, Policy> policies,
       Dictionary<string, (State, double)> policyIdInitialStateDuration,
       double time,
@@ -41,16 +53,18 @@ namespace ProjectionSemiMarkov
       )
     {
       // Deducing the state space from the possible transitions in intensity dictionary
-      var allPossibleTransitions = intensities[Gender.Female].Union(intensities[Gender.Male]).ToList();
+      var allPossibleTransitions = marketIntensities[Gender.Female].Union(marketIntensities[Gender.Male]).ToList();
       stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
       .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
 
-      this.intensities = intensities;
+      //todo - is imported correctly!!?
+      this.marketIntensities = marketIntensities;
+      this.technicalIntensities = technicalIntensities;
       this.policies = policies;
       this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
       this.Time = time;
 
-      //todo - need r and r^* as input, as well as pi_1 and pi_2
+      //todo - import!! (need r and r^* as input, as well as pi_1 and pi_2)
       this.rStar = rStar;
       this.r = r;
       this.pi1 = pi1;
@@ -94,8 +108,6 @@ namespace ProjectionSemiMarkov
     {
       AllocateMemoryAndInitialize();
 
-      var Dividends = new Dictionary<string, Dictionary<State, double[][]>>();
-
       Parallel.ForEach(policies, policy => ProbabilityQCalculatePerPolicy(policy.Value));
 
       return(Probabilities);
@@ -103,12 +115,15 @@ namespace ProjectionSemiMarkov
 
     public void ProbabilityQCalculatePerPolicy(Policy policy) 
     {
-      var technicalreserves = new double[][];
-
-      var policyProbabilities = Probabilities[policy.policyId];
+      var policyProbabilities = probabilities[policy.policyId];
       var policyQProbabilities = Probabilities[policy.policyId];
-      var numberOfTimePoints = policyProbabilities.First().Value.Length;
-      var genderIntensity = intensities[policy.gender];
+      var numberOfTimePoints = policyQProbabilities.First().Value.Length;
+      var genderMarketIntensity = marketIntensities[policy.gender];
+      var genderTechnicalIntensity = technicalIntensities[policy.gender];
+
+      var technicalDaggerReserves = new Dictionary<State,double[][]>(); //todo: import!!
+      var dividendsCont = new Dictionary<ContinousDividend,Dictionary<State,double[][]>>(); //new Dictionary<DividendType,Dictionary<State,Func<double[],double[],Dictionary<State,double[][]>,Dictionary<State,Dictionary<State,double[][]>>,Dictionary<State,Dictionary<State,double[][]>>, Dictionary<State,double[][]>,Dictionary<State,double[][]>,Dictionary<State,double[][]>, Dictionary<State,double[][]>>>>(); //todo - import!! //r , r* , V^circ,* , mu_^* , mu , b^circ , b^dagger , V^dagger   
+      var dividendsJump = new Dictionary<JumpDividend,Dictionary<State,Dictionary<State,double[][]>>>(); //todo - import!! 
 
       // Loop over each Time point
       for (var t = 1; t < numberOfTimePoints; t++)
@@ -122,40 +137,63 @@ namespace ProjectionSemiMarkov
         foreach (var j in stateSpace)
         {
           // Loop over l in Kolmogorov forward integro-differential equations (Prob. mass going in)
-          foreach (var l in genderIntensity.Keys)
+          foreach (var l in genderMarketIntensity.Keys)
           {
             Func<double, double, double> intensity;
-            if (!genderIntensity[l].TryGetValue(j, out intensity))
+            if (!genderMarketIntensity[l].TryGetValue(j, out intensity))
               continue;
 
             probIntegrals[1] = 0;
-            // Riemann sum over duration for integrals
-            for (var u = 1; u <= durationMaxIndexPrev; u++)
+            // Riemann sum over duration for integrals to max(u_0+t,D(t))=u_0+t
+            if (l == j) //todo - somewhat ugly to case here as we have to write two loops, but should be more optimized
             {
-              probIntegrals[u + 1] = probIntegrals[u] + (policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])
-                * genderIntensity[l][j](policy.age + Time + IndexToTime(t - 0.5),
-                policy.initialDuration + IndexToTime(u - 0.5)) * stepSize;
+              for (var u = 1; u <= durationMaxIndexPrev; u++)
+              {
+                probIntegrals[u + 1] = probIntegrals[u] 
+                  +(policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])*
+                  dividendsCont[ContinousDividend.Continuous0][j][t-1][u]/technicalDaggerReserves[j][t-1][u]*stepSize //todo - should probably have linearly-interpolated between durations so we could use u-0.5
+                  +(policyQProbabilities[l][t - 1][u] - policyQProbabilities[l][t - 1][u - 1])*
+                  dividendsCont[ContinousDividend.Continuous1][j][t-1][u]/technicalDaggerReserves[j][t-1][u]*stepSize
+                  -(policyQProbabilities[l][t - 1][u] - policyQProbabilities[l][t - 1][u - 1])*genderMarketIntensity[j][j](policy.age + Time + IndexToTime(t - 0.5),
+                  policy.initialDuration + IndexToTime(u - 0.5)) * stepSize;
 
-              //todo: Should probably not have age in policy. Could consider splitting age and Time to allow for more general intesities.
+                //todo: Should probably not have Time in policy. Could consider splitting age and Time to allow for more general intesities.
+              }
+            }
+            else
+            {
+              for (var u = 1; u <= durationMaxIndexPrev; u++)
+              {
+                probIntegrals[u + 1] = probIntegrals[u] 
+                  +(policyProbabilities[l][t - 1][u] - policyProbabilities[l][t - 1][u - 1])*
+                  dividendsJump[JumpDividend.Jump0][l][j][t-1][u]/technicalDaggerReserves[j][t-1][0]*genderMarketIntensity[l][j](policy.age + Time + IndexToTime(t - 0.5),
+                  policy.initialDuration + IndexToTime(u - 0.5))*stepSize //todo - should probably have linearly-interpolated between durations so we could use u-0.5
+                  +(policyQProbabilities[l][t - 1][u] - policyQProbabilities[l][t - 1][u - 1])*
+                  dividendsJump[JumpDividend.Jump1][l][j][t-1][u]/technicalDaggerReserves[j][t-1][0]*genderMarketIntensity[l][j](policy.age + Time + IndexToTime(t - 0.5),
+                  policy.initialDuration + IndexToTime(u - 0.5))*stepSize
+                  +(policyQProbabilities[l][t - 1][u] - policyQProbabilities[l][t - 1][u - 1])*genderMarketIntensity[l][j](policy.age + Time + IndexToTime(t - 0.5),
+                  policy.initialDuration + IndexToTime(u - 0.5))*stepSize;
+                //todo: Should probably not have Time in policy. Could consider splitting age and Time to allow for more general intesities.
+              }
             }
 
-            // For j = l, we need to subtract the cumulative integral for each duration
-            // For j \neq l, we need to add the whole integral from 0 to D(s) for each duration
+            // For j = l, the upper limit of the integral is D(t)=d+t
+            // For j \neq l, the upper limit is u_0+t which is d-independent
             if (j == l)
             {
               for (var u = 1; u <= durationMaxIndexCur; u++)
-                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] - probIntegrals[u];
+                policyQProbabilities[j][t][u] = policyQProbabilities[j][t][u] + probIntegrals[u];
             }
             else
             {
               for (var u = 1; u <= durationMaxIndexCur; u++)
-                policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + probIntegrals.Last();
+                policyQProbabilities[j][t][u] = policyQProbabilities[j][t][u] + probIntegrals.Last();
             }
           }
 
           // We add the previous probability p_ij(t_0,s,u,d+s-t_0) to get p_ij(t_0,s+h,u,d+s+h-t_0)= p_ij(t_0,s,u,d+s-t_0)+d/ds p_ij(t_0,s,u,d+s-t_0)*h
           for (var u = 1; u <= durationMaxIndexCur; u++)
-            policyProbabilities[j][t][u] = policyProbabilities[j][t][u] + policyProbabilities[j][t - 1][u - 1];
+            policyQProbabilities[j][t][u] = policyQProbabilities[j][t][u] + policyQProbabilities[j][t - 1][u - 1];
         }
       }
     }

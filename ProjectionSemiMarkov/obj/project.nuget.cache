@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "WMCCmtT2jgdL/qf0c8cznhkeG9w/6fOzpdRpuLgLLHgp4VKJMhf9irDAXmUf72DBDQt0LDN9TdG8DnyQ34zIkQ==",
+  "dgSpecHash": "uMdAXxoWdTNU7DYj9KoIeq1lXwoNKvGoBVa6K/myRxlYuwkMCLqCvuotOEQRVZh9pE0Cq73l9XU3YUENeeqZ4w==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sandqvist1\\Source\\Repos\\Computation-of-bonus-in-semi-markov-setup\\C#\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj",
+  "projectFilePath": "C:\\Users\\Sandqvist1\\source\\repos\\ImplementationProjection-CSharp\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sandqvist1\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
   ],

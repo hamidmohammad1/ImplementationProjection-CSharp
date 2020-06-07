@@ -40,11 +40,15 @@ namespace ProjectionSemiMarkov
     Bonus,
   }
 
-  public enum DividendType
+  public enum ContinousDividend
   {
     Continuous0,
     Continuous1,
+  }
+  public enum JumpDividend
+  {
     Jump0,
     Jump1
   }
+      
 }
