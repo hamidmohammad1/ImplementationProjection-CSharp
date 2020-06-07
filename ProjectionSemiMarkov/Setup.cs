@@ -213,7 +213,9 @@ namespace ProjectionSemiMarkov
       var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
       {
         { State.Active, paymentsMarket },
-        { State.Disabled, paymentsMarket }
+        { State.Disabled, paymentsMarket },
+        { State.FreePolicyActive, paymentsMarket },
+        { State.FreePolicyDisabled, paymentsMarket },
       };
 
       return new Product(technicalContinuousPayments, null, marketContinuousPayments, null,
@@ -227,7 +229,6 @@ namespace ProjectionSemiMarkov
     public static Product CreatePremiumPayment(double value)
     {
       Func<double, double> paymentsTechnical = x => LessThanIndicator(x, pensionAge) * value;
-      Func<double, double, double> paymentsMarket = (x, y) => paymentsTechnical(x);
 
       var technicalContinuousPayments = new Dictionary<State, Func<double, double>>
       {
@@ -235,13 +236,7 @@ namespace ProjectionSemiMarkov
         { State.Disabled, paymentsTechnical }
       };
 
-      var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
-      {
-        { State.Active, paymentsMarket },
-        { State.Disabled, paymentsMarket }
-      };
-
-      return new Product(technicalContinuousPayments, null, marketContinuousPayments, null,
+      return new Product(technicalContinuousPayments, null, null, null,
         ProductCollection.Premium);
     }
 
@@ -269,7 +264,8 @@ namespace ProjectionSemiMarkov
 
       var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
         {
-          { State.Disabled, paymentsMarket }
+          { State.Disabled, paymentsMarket },
+          { State.FreePolicyDisabled, paymentsMarket }
         };
 
       return new Product(technicalContinuousPayments, null, marketContinuousPayments, null,

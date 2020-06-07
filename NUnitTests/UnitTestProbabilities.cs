@@ -22,11 +22,12 @@ namespace NUnitTests
     private Dictionary<string, Dictionary<State, double[][]>> probabilities;
     private Dictionary<string, Dictionary<State, double[][]>> rhoProbabilities;
     private Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalReserves;
-    private Dictionary<string, double[]> freePolicyFactor;
+    Dictionary<string, double[]> freePolicyFactor;
 
     [SetUp]
     public void Setup() //run before each test
     {
+
       var lifeAnnuityProduct = CreateLifeAnnuity(1000);
       var premiumProduct = CreatePremiumPayment(-200);
       var deferredDisabilityAnnuity = CreateDeferredDisabilityAnnuity(500);
@@ -52,18 +53,16 @@ namespace NUnitTests
 
       var technicalReserveCalculator = new TechnicalReserveCalculator();
       technicalReserves = technicalReserveCalculator.Calculate();
+      var (originalTechReserves, originalTechPositiveReserves, bonusTechnicalReserves)
+        = technicalReserveCalculator.CalculateTechnicalReserve();
 
       // Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each Time point
-      freePolicyFactor = technicalReserves
-        .ToDictionary(policy => policy.Key,
-          policy => policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active]
-            .Zip(policy.Value[(PaymentStream.Original, Sign.Negative)][State.Active], (x, y) => x + y)
-            .Zip(policy.Value[(PaymentStream.Original, Sign.Positive)][State.Active], (x, y) => y == 0 ? 1.0 : x / y)
-            .ToArray());
+      freePolicyFactor = technicalReserveCalculator.CalculateFreePolicyFactor();
 
       var policyIdInitialStateDuration = policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
-      var time = 0.0;
-      marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time, freePolicyFactor);
+      marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time: 0.0, freePolicyFactor,
+        originalTechReserves, originalTechPositiveReserves);
+
       // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
       probabilities = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
       rhoProbabilities = marketProbabilityCalculator.RhoProbabilities;
@@ -169,8 +168,7 @@ namespace NUnitTests
       Console.WriteLine(string.Join(", ", s4.Select(x => x.ToString(CultureInfo.InvariantCulture))));
       */
 
-      var technicalReservesPolicy1 =
-        technicalReserves[policy1.policyId][(PaymentStream.Original, Sign.Positive)][State.Active];
+      var technicalReservesPolicy1 = technicalReserves[policy1.policyId][(PaymentStream.Original, Sign.Positive)][State.Active];
       CollectionAssert.AreEqual(TestSourceForRegressionTests.GetExpectedTechnicalValues(), technicalReservesPolicy1);
 
       var freePolicyFactorPolicy1 = freePolicyFactor[policy1.policyId];

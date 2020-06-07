@@ -49,7 +49,7 @@ namespace ProjectionSemiMarkov
       Dictionary<string, (State, double)> policyIdInitialStateDuration,
       double time,
       Dictionary<string, Dictionary<State, double[][]>> probabilities,
-      Dictionary<string, Dictionary<(PaymentStream, Sign), Dictionary<State, double[]>>> technicalreserves
+      Dictionary<string, Dictionary<State, double[]>> technicalReserves
       )
     {
       // Deducing the state space from the possible transitions in intensity dictionary
@@ -70,8 +70,8 @@ namespace ProjectionSemiMarkov
       this.pi1 = pi1;
       this.pi2 = pi2;
 
-      this.probabilities = probabilities;
-      this.technicalreserves = technicalreserves;
+      this.Probabilities = probabilities;
+      this.TechnicalReserves = technicalReserves;
     }
 
     /// <summary>
@@ -79,7 +79,7 @@ namespace ProjectionSemiMarkov
     /// </summary>
     private void AllocateMemoryAndInitialize()
     {
-      Probabilities = new Dictionary<string, Dictionary<State, double[][]>>();
+      QProbabilities = new Dictionary<string, Dictionary<State, double[][]>>();
 
       foreach (var (policyId, v) in policies)
       {
@@ -110,10 +110,10 @@ namespace ProjectionSemiMarkov
 
       Parallel.ForEach(policies, policy => ProbabilityQCalculatePerPolicy(policy.Value));
 
-      return(Probabilities);
-    }  
+      return (Probabilities);
+    }
 
-    public void ProbabilityQCalculatePerPolicy(Policy policy) 
+    public void ProbabilityQCalculatePerPolicy(Policy policy)
     {
       var policyProbabilities = probabilities[policy.policyId];
       var policyQProbabilities = Probabilities[policy.policyId];
