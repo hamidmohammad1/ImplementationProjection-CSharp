@@ -2,6 +2,7 @@ using NUnit.Framework;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 using ProjectionSemiMarkov;
@@ -27,7 +28,6 @@ namespace NUnitTests
     [SetUp]
     public void Setup() //run before each test
     {
-
       var lifeAnnuityProduct = CreateLifeAnnuity(1000);
       var premiumProduct = CreatePremiumPayment(-200);
       var deferredDisabilityAnnuity = CreateDeferredDisabilityAnnuity(500);
@@ -42,7 +42,7 @@ namespace NUnitTests
           { (PaymentStream.Bonus, Sign.Positive), lifeAnnuityProduct }
         };
 
-      policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 120 - 30,
+      policy1 = new Policy(policyId: "policy1", age: 30, gender: Gender.Male, expiryAge: 90,
         initialState: State.Active, initialDuration: 5, payments: payments);
 
       policies = new Dictionary<string, Policy>
@@ -59,9 +59,8 @@ namespace NUnitTests
       // Calculating \rho = (V_{Active}^{\circ,*,+} + V_{Active}^{\circ,*,-})/ V_{Active}^{\circ,*,+} for each Time point
       freePolicyFactor = technicalReserveCalculator.CalculateFreePolicyFactor();
 
-      var policyIdInitialStateDuration = policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration));
-      marketProbabilityCalculator = new ProbabilityCalculator(policyIdInitialStateDuration, time: 0.0, freePolicyFactor,
-        originalTechReserves, originalTechPositiveReserves);
+      marketProbabilityCalculator = new ProbabilityCalculator(time: 0.0, freePolicyFactor,
+        originalTechReserves, originalTechPositiveReserves, bonusTechnicalReserves);
 
       // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
       probabilities = marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
@@ -71,17 +70,20 @@ namespace NUnitTests
     [Test]
     public void ProbabilitiesSumToOneAtUmax()
     {
-      for (var t = 0; t < marketProbabilityCalculator.GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
+      for (var t = 0; t < marketProbabilityCalculator
+        .GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
       {
         var umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration,t);
-        Assert.That(marketProbabilityCalculator.stateSpace.Sum(j => probabilities[policy1.policyId][j][t][umax]), Is.EqualTo(1.0).Within(epsilon));
+        Assert.That(marketProbabilityCalculator.MarketStateSpace
+          .Sum(j => probabilities[policy1.policyId][j][t][umax]), Is.EqualTo(1.0).Within(epsilon));
       }
     }
 
     [Test]
     public void ProbabilitiesAtActiveAreDurationDependent()
     {
-      for (var t = 1; t < marketProbabilityCalculator.GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
+      for (var t = 1; t < marketProbabilityCalculator
+        .GetNumberOfTimePoints(policy1, marketProbabilityCalculator.Time); t++)
       {
         Assert.That(probabilities[policy1.policyId][State.Active][t].Distinct().Count(), Is.GreaterThan(1));
       }
@@ -144,14 +146,16 @@ namespace NUnitTests
       for (var t = 0; t < 5; t++)
       {
         var umax = marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, t);
-        Assert.That(probabilities[policy1.policyId][State.Active][t][umax], Is.EqualTo(expectedProbabilities[t]).Within(epsilon));
+        Assert.That(probabilities[policy1.policyId][State.Active][t][umax],
+          Is.EqualTo(expectedProbabilities[t]).Within(epsilon));
       }
     }
 
     [Test]
     public void RegressionTests()
     {
-      /* USE FOR GETTING EXPECTED REGRESSION VALUE
+      /*
+      //USE FOR GETTING EXPECTED REGRESSION VALUE
       var s1 = technicalReserves[policy1.policyId][(PaymentStream.Original, Sign.Positive)][State.Active];
       Console.WriteLine(string.Join(", ", s1.Select(x => x.ToString(CultureInfo.InvariantCulture))));
       Console.WriteLine("--------------------------------------------------------------------------------------------------------------------------------");

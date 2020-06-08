@@ -10,7 +10,15 @@ namespace ProjectionSemiMarkov
       var stopWatch = new Stopwatch();
       stopWatch.Start();
 
-      var projectionInput = new Projection();
+      var stateIndependentProjection = new StateIndependentProjection(
+        input: new ProjectionInput(),//TODO MAKE THE CASH FLOWS GREAT AGAIN!
+        ecoScenarioGenerator: new EconomicScenarioGenerator(),
+        numberOfEconomicScenarios: 1);
+
+      stateIndependentProjection.Project();
+
+      var result = stateIndependentProjection.ProjectionResult;
+      //TODO NOW CALCULATE BALANCE QUANTITIES. Should be easy.
 
       stopWatch.Stop();
       var timeInSeconds = stopWatch.ElapsedMilliseconds;

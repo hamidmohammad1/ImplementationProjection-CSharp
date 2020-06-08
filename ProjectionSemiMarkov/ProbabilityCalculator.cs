@@ -9,7 +9,7 @@ namespace ProjectionSemiMarkov
   public class ProbabilityCalculator : Calculator
   {
     /// <summary>
-    /// A dictionary indexed on <see cref="Policy.policyId"/> and contains the rho-modified semi-markov Probabilities.
+    /// A dictionary indexed on <see cref="Policy.policyId"/> and contains the semi-markov ordinary probabilities.
     /// </summary>
     /// <remarks>
     /// Given a <c>policyId</c>, a <c>state</c>, a <c>timePoint</c>, a <c>duration</c>, then
@@ -19,36 +19,51 @@ namespace ProjectionSemiMarkov
     /// </remarks>
     public Dictionary<string, Dictionary<State, double[][]>> Probabilities { get; private set; }
 
+    /// <summary>
+    /// A dictionary indexed on <see cref="Policy.policyId"/> and contains the semi-markov rho-modified probabilities.
+    /// </summary>
     public Dictionary<string, Dictionary<State, double[][]>> RhoProbabilities { get; private set; }
 
-    public Dictionary<string, (State, double)> PolicyIdInitialStateDuration { get; private set; }
-
+    /// <summary>
+    /// The start time.
+    /// </summary>
     public double Time { get; private set; }
 
-    public Dictionary<string, double[]> FreePolicyFactor { get; private set; }
-    public Dictionary<string, Dictionary<State, List<double>>> OriginalTechReserves { get; private set; }
-    public Dictionary<string, Dictionary<State, List<double>>> OriginalPositiveTechReserves { get; private set; }
+    /// <summary>
+    /// The free policy factor.
+    /// </summary>
+    public readonly Dictionary<string, double[]> FreePolicyFactor;
+
+    /// <summary>
+    /// The original technical reserves.
+    /// </summary>
+    public readonly Dictionary<string, Dictionary<State, List<double>>> OriginalTechReserves;
+
+    /// <summary>
+    /// The original positive technical reserves.
+    /// </summary>
+    public readonly Dictionary<string, Dictionary<State, List<double>>> OriginalPositiveTechReserves;
+
+    /// <summary>
+    /// The original bonus technical reserves.
+    /// </summary>
+    public readonly Dictionary<string, Dictionary<State, double[]>> BonusTechReserves;
 
     /// <summary>
     /// Constructing ProbabilityCalculator.
     /// </summary>
     public ProbabilityCalculator(
-      Dictionary<string, (State, double)> policyIdInitialStateDuration,
       double time,
       Dictionary<string, double[]> freePolicyFactor,
       Dictionary<string, Dictionary<State, List<double>>> originalTechReserves,
-      Dictionary<string, Dictionary<State, List<double>>> originalPositiveTechReserves)
+      Dictionary<string, Dictionary<State, List<double>>> originalPositiveTechReserves,
+      Dictionary<string, Dictionary<State, double[]>> bonusTechReserves)
     {
-      // Deducing the state space from the possible transitions in intensity dictionary
-      var allPossibleTransitions = marketIntensities[Gender.Female].Union(marketIntensities[Gender.Male]).ToList();
-      stateSpace = allPossibleTransitions.SelectMany(x => x.Value.Keys)
-      .Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
-
-      this.PolicyIdInitialStateDuration = policyIdInitialStateDuration;
       this.Time = time;
       this.FreePolicyFactor = freePolicyFactor;
       this.OriginalTechReserves = originalTechReserves;
       this.OriginalPositiveTechReserves = originalPositiveTechReserves;
+      this.BonusTechReserves = bonusTechReserves;
     }
 
     /// <summary>
@@ -87,7 +102,7 @@ namespace ProjectionSemiMarkov
 
         var statesToCreateEntryFor = calculateRhoProbability
           ? GiveCollectionOfStates(StateCollection.FreePolicyStatesWithSurrender)
-          : stateSpace;
+          : MarketStateSpace;
 
         foreach (var state in statesToCreateEntryFor)
         {
@@ -140,7 +155,7 @@ namespace ProjectionSemiMarkov
 
       var states = calculateRhoProbability
         ? GiveCollectionOfStates(StateCollection.FreePolicyStatesWithSurrender)
-        : stateSpace.ToList();
+        : MarketStateSpace.ToList();
       var possibleMidStates = genderIntensity.Keys.Where(x => states.Contains(x));
 
       // Loop over each Time point
@@ -211,7 +226,7 @@ namespace ProjectionSemiMarkov
     }
 
     /// <summary>
-    /// Calculating market cash flows
+    /// Calculating market original cash flows
     /// </summary>
     public Dictionary<string, double[]> CalculateMarketOriginalCashFlows()
     {
@@ -230,11 +245,11 @@ namespace ProjectionSemiMarkov
 
         // Since we have no products with jump payments (except surrender value), we only extract the continuous payments.
         var policyIdOriginalTechReserve = OriginalTechReserves[policyId];
-        CalculateMarketOriginalCashFlowsPerStateSet(standardStates, cashFlows, sumPayments.MarketContinuousPayment,
+        CalculateCashFlowsPerStateSet(standardStates, cashFlows, sumPayments.MarketContinuousPayment,
           policyIdOriginalTechReserve, policy.age, marketIntensities[policy.gender], Probabilities[policyId]);
 
         var policyIdOriginalPositiveTechReserve = OriginalPositiveTechReserves[policyId];
-        CalculateMarketOriginalCashFlowsPerStateSet(freePolicyStates, cashFlows,
+        CalculateCashFlowsPerStateSet(freePolicyStates, cashFlows,
           positiveOriginalPayments.MarketContinuousPayment, policyIdOriginalPositiveTechReserve, policy.age,
           marketIntensities[policy.gender], RhoProbabilities[policyId]);
 
@@ -245,9 +260,33 @@ namespace ProjectionSemiMarkov
     }
 
     /// <summary>
+    /// Calculating market bonus cash flows
+    /// </summary>
+    public Dictionary<string, double[]> CalculateMarketBonusCashFlows()
+    {
+      var allStates = GiveCollectionOfStates(StateCollection.AllStates);
+      var policyIdCashFlows = new Dictionary<string, double[]>();
+
+      foreach (var (policyId, policy) in policies)
+      {
+        var cashFlows = new double[Probabilities[policyId].First().Value.Length];
+        var bonusPayments = policy.Payments[(PaymentStream.Bonus, Sign.Positive)];
+
+        // Since we have no products with jump payments (except surrender value), we only extract the continuous payments.
+        var policyIdBonusTech = BonusTechReserves[policyId].ToDictionary(x => x.Key, x => x.Value.ToList());
+        CalculateCashFlowsPerStateSet(allStates, cashFlows, bonusPayments.MarketContinuousPayment,
+          policyIdBonusTech, policy.age, marketIntensities[policy.gender], Probabilities[policyId]);
+
+        policyIdCashFlows.Add(policyId, cashFlows);
+      }
+
+      return policyIdCashFlows;
+    }
+
+    /// <summary>
     /// Calculating market cash flows for a state set.
     /// </summary>
-    public void CalculateMarketOriginalCashFlowsPerStateSet(
+    public void CalculateCashFlowsPerStateSet(
       List<State> states,
       double[] cashFlows,
       Dictionary<State, Func<double, double, double>>  contPayments,
@@ -256,20 +295,21 @@ namespace ProjectionSemiMarkov
       Dictionary<State, Dictionary<State, Func<double, double, double>>> genderIntensity,
       Dictionary<State, double[][]> policyIdProb)
     {
-      foreach (var toState in states.Where(x => contPayments.Keys.Contains(x)))
+      // We should always have active and free policy active, since there are surrender payment upon transition
+      foreach (var toState in states.Where(x => contPayments.Keys.Contains(x) || x == State.FreePolicyActive || x == State.Active))
       {
-        var positiveContInState = contPayments[toState];
+        var paymentInState = contPayments.ContainsKey(toState) ? contPayments[toState] : (x, y) => 0.0;
         var policyIdProbInState = policyIdProb[toState];
 
         for (var s = 1; s < cashFlows.Length; s++)
         {
-          var cash = 0.0;
+          var cashFlow = 0.0;
 
           if (TransitionExists(genderIntensity, toState, State.Surrender))
           {
             for (var z = 1; z < policyIdProbInState[s].Length; z++)
             {
-              cash = cash + (positiveContInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
+              cashFlow = cashFlow + (paymentInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
                 + techReserve[toState][s] * genderIntensity[toState][State.Surrender](policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize))
                 * (policyIdProbInState[s][z] - policyIdProbInState[s][z - 1]);
             }
@@ -278,7 +318,7 @@ namespace ProjectionSemiMarkov
           {
             for (var z = 1; z < policyIdProbInState[s].Length; z++)
             {
-              cash = cash + (positiveContInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
+              cashFlow = cashFlow + (paymentInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
                 + techReserve[ConvertToStandardState(toState)][s]
                 * genderIntensity[toState][State.FreePolicySurrender](policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize))
                 * (policyIdProbInState[s][z] - policyIdProbInState[s][z - 1]);
@@ -288,12 +328,12 @@ namespace ProjectionSemiMarkov
           {
             for (var z = 1; z < policyIdProbInState[s].Length; z++)
             {
-              cash = cash + positiveContInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
+              cashFlow = cashFlow + paymentInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
                 * (policyIdProbInState[s][z] - policyIdProbInState[s][z - 1]);
             }
           }
 
-          cashFlows[s] = cashFlows[s] + cash * stepSize;
+          cashFlows[s] = cashFlows[s - 1] + cashFlow * stepSize;
         }
       }
     }

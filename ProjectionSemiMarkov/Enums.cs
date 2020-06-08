@@ -55,10 +55,22 @@ namespace ProjectionSemiMarkov
     Continuous0,
     Continuous1,
   }
+
   public enum JumpDividend
   {
     Jump0,
     Jump1
   }
-      
+
+  public enum Assets
+  {
+    ShortRate,
+    RiskyAsset,
+  }
+
+  public enum Index
+  {
+    Zero,
+    One,
+  }
 }

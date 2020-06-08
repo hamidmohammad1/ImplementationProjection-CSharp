@@ -85,7 +85,7 @@ namespace ProjectionSemiMarkov
           return State.Surrender;
 
         default:
-          throw new InvalidOperationException("Argument is not a not a free policy state");
+          return state;
       }
     }
 
@@ -116,6 +116,13 @@ namespace ProjectionSemiMarkov
         default:
           throw new InvalidOperationException("Argument is not valid");
       }
+    }
+
+    public static IEnumerable<State> GiveStateSpaceFromIntensities(
+      Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> intensities)
+    {
+      var allPossibleTransitions = intensities[Gender.Female].Union(intensities[Gender.Male]).ToList();
+      return allPossibleTransitions.SelectMany(x => x.Value.Keys).Union(allPossibleTransitions.Select(y => y.Key)).Distinct();
     }
   }
 }
