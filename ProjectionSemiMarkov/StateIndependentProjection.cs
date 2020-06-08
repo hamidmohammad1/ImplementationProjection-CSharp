@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 using Math = System.Math;
@@ -103,10 +105,26 @@ namespace ProjectionSemiMarkov
       //TODO OLIVER
       foreach (var portfolio in ecoResult.PortfolioResults)
       {
+        var x = new double();
+        if( timePoint % 12 == 0) //NB: hardcodet, h=1/12 burde bruges!
+        {
+          if (portfolio.Value.AssetProcess[timePoint]-portfolio.Value.PortfolioWideTechnicalReserve[timePoint] > 0)
+          {
+             x = 0.003*(portfolio.Value.AssetProcess[timePoint]-portfolio.Value.PortfolioWideTechnicalReserve[timePoint]);
+          }
+          else
+          {
+            x = -(portfolio.Value.AssetProcess[timePoint]-portfolio.Value.PortfolioWideTechnicalReserve[timePoint]);
+          }
+        }
+        else
+        {
+          x = 0;
+        }
         portfolio.Value.TransactionProcess[Index.Zero][timePoint] = 0.0;
-        portfolio.Value.TransactionProcess[Index.One][timePoint] = 0.0;
-        portfolio.Value.DividendProcess[Index.Zero][timePoint] = 0.0;
-        portfolio.Value.DividendProcess[Index.One][timePoint] = 0.0;
+        portfolio.Value.TransactionProcess[Index.One][timePoint] = x; //take 0.3% of "surplus" if positive, otherwise, transfer so surplus is non-negative 
+        portfolio.Value.DividendProcess[Index.Zero][timePoint] = 0.01;
+        portfolio.Value.DividendProcess[Index.One][timePoint] = 0.01;
         portfolio.Value.ShareInRiskyStockAssetProcess[timePoint] = 0.0;
       }
       ecoResult.EquityResults.ShareInRiskyAssetEquity[timePoint] = 0.0;
