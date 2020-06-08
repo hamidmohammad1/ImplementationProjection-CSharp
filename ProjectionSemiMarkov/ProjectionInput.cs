@@ -48,6 +48,11 @@ namespace ProjectionSemiMarkov
     /// </summary>
     public Dictionary<string, Policy> Policies { get; set; }
 
+    /// <summary>
+    /// The step size used for calculations.
+    /// </summary>
+    public double StepSize { get; set; }
+
     public ProjectionInput()
     {
       var technicalReserveCalculator = new TechnicalReserveCalculator();
@@ -78,6 +83,8 @@ namespace ProjectionSemiMarkov
 
       MarketOriginalCashFlows = marketProbabilityCalculator.CalculateMarketOriginalCashFlows();
       MarketBonusCashFlows = marketProbabilityCalculator.CalculateMarketBonusCashFlows();
+
+      StepSize = marketProbabilityCalculator.stepSize;
     }
 
     /// <summary>

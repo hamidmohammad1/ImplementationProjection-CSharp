@@ -13,7 +13,7 @@ namespace ProjectionSemiMarkov
     /// The used step size. We validate the <see cref="Policy.age"/>, <see cref="Policy.initialDuration"/> and
     /// <see cref="Policy.initialTime"/> are at form stepSize * n for some integer n.
     /// </summary>
-    protected readonly double stepSize = 1.0 / 12.0;
+    public readonly double stepSize = 1.0 / 12.0;
 
     /// <summary>
     /// A dictionary containing the market intensities.
