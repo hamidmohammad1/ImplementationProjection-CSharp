@@ -67,4 +67,10 @@ namespace ProjectionSemiMarkov
     ShortRate,
     RiskyAsset,
   }
+
+  public enum Index
+  {
+    Zero,
+    One,
+  }
 }
