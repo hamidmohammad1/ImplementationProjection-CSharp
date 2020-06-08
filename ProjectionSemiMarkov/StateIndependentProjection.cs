@@ -32,7 +32,7 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// The end time.
     /// </summary>
-    public double ProjectionEndTime => EcoScenarioGenerator.LastExpiryTime;
+    public int ProjectionEndTime => (int)EcoScenarioGenerator.LastExpiryTime;
 
     /// <summary>
     /// The end time.
@@ -63,46 +63,102 @@ namespace ProjectionSemiMarkov
     /// </summary>
     public void Initialize(StateIndependentProjectionResult ecoResult)
     {
+      // Equity
+      ecoResult.EquityResults.Equity[0] = Math.Pow(10, 7);
+
       // Portfolio quantities
       foreach (var portfolio in ecoResult.PortfolioResults)
       {
         portfolio.Value.AssetProcess[0] = Math.Pow(10, 8);
-        portfolio.Value.DividendProcess[Index.Zero][0] = 0.0;
-        portfolio.Value.DividendProcess[Index.One][0] = 0.0;
-        portfolio.Value.InvestmentPortfolioAssetProcess[Assets.ShortRate][0] = 0.0;
-        portfolio.Value.InvestmentPortfolioAssetProcess[Assets.RiskyAsset][0] = 0.0;
-
         portfolio.Value.ProjectedBonusCashFlow[0] = 0.0;
-        portfolio.Value.TransactionProcess[Index.Zero][0] = 0.0;
-        portfolio.Value.TransactionProcess[Index.One][0] = 0.0;
-
-        var initialQValue = 0.0;
-        portfolio.Value.QProcess[0] = initialQValue;
-
-        // Setting initial portfolio wide mean reserve at time zero
-        portfolio.Value.PortfolioWideMarketReserve[0] = CalculatePortFolioWideMarketReservePerPortfolio(0,
-          ecoResult.EconomicScenario[Assets.ShortRate][0], portfolio.Key, initialQValue);
-        portfolio.Value.PortfolioWideTechnicalReserve[0] = Input.PortfolioWideOriginalTechReserves[portfolio.Key][0]
-          + initialQValue * Input.PortfolioWideBonusTechReserves[portfolio.Key][0];
+        portfolio.Value.QProcess[0] = 0.0;
       }
-
-      // Equity
-      ecoResult.EquityResults.Equity[0] = Math.Pow(10, 7);
-      foreach (var keyValuePair in ecoResult.EquityResults.InvestmentPortfolioEquity)
-        keyValuePair.Value[0] = 0.0;
     }
 
     /// <summary>
     /// Calculating reserve by discounting cash flow with relevant zero coupon bond prices.
     /// </summary>
-    public double CalculatePortFolioWideMarketReservePerPortfolio(int timePoint, double shortRateAtTimePoint,
-      string portfolioId, double qValue)
+    public void CalculatePortFolioWideReserveForCurrentTimePoint(StateIndependentProjectionResult ecoResult,
+      int timePoint)
     {
-      return ReserveCalculator(
-        timePoint,
-        shortRateAtTimePoint,
-        Input.MarketOriginalCashFlows[portfolioId]
-          .Zip(Input.MarketBonusCashFlows[portfolioId], (x, y) => x + qValue * y).ToArray());
+      foreach (var (portfolio, value) in ecoResult.PortfolioResults)
+      {
+        value.PortfolioWideTechnicalReserve[timePoint] = Input.PortfolioWideOriginalTechReserves[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)]
+          + value.QProcess[timePoint]* Input.PortfolioWideBonusTechReserves[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)];
+
+        value.PortfolioWideMarketReserve[timePoint] =
+          ReserveCalculator(
+          timePoint,
+          ecoResult.EconomicScenario[Assets.ShortRate][ProjectionIndexCalculatorIndexConverter(timePoint)],
+          Input.MarketOriginalCashFlows[portfolio]
+            .Zip(Input.MarketBonusCashFlows[portfolio], (x, y) => x + value.QProcess[timePoint] * y).ToArray());
+      }
+    }
+
+    /// <summary>
+    /// Calculate controls for current time point.
+    /// </summary>
+    private void CalculateControlsForCurrentTimePoint(StateIndependentProjectionResult ecoResult, int timePoint)
+    {
+      //TODO OLIVER
+      foreach (var portfolio in ecoResult.PortfolioResults)
+      {
+        portfolio.Value.TransactionProcess[Index.Zero][timePoint] = 0.0;
+        portfolio.Value.TransactionProcess[Index.One][timePoint] = 0.0;
+        portfolio.Value.DividendProcess[Index.Zero][timePoint] = 0.0;
+        portfolio.Value.DividendProcess[Index.One][timePoint] = 0.0;
+        portfolio.Value.ShareInRiskyStockAssetProcess[timePoint] = 0.0;
+      }
+      ecoResult.EquityResults.ShareInRiskyAssetEquity[timePoint] = 0.0;
+    }
+
+    /// <summary>
+    /// Projecting shapes to next time point.
+    /// </summary>
+    public void ProjectShapesNextTimePoint(StateIndependentProjectionResult ecoResult, int timePoint)
+    {
+      var shortRateToLastTimePoint = ecoResult.EconomicScenario[Assets.ShortRate][ProjectionIndexCalculatorIndexConverter(timePoint - 1)];
+      var lastTimePointRiskyAssetPrice = ecoResult.EconomicScenario[Assets.RiskyAsset][ProjectionIndexCalculatorIndexConverter(timePoint - 1)];
+      var riskyAssetPriceChange =
+        ecoResult.EconomicScenario[Assets.RiskyAsset][ProjectionIndexCalculatorIndexConverter(timePoint)]
+        - lastTimePointRiskyAssetPrice;
+
+      var transactionSum = 0.0;
+      // Portfolio quantities
+      foreach (var (portfolio, value) in ecoResult.PortfolioResults)
+      {
+        // Projecting Q-process
+        value.QProcess[timePoint] = value.QProcess[timePoint - 1]
+          + (value.DividendProcess[Index.Zero][timePoint - 1]
+             + value.DividendProcess[Index.One][timePoint - 1] * value.QProcess[timePoint - 1]) * ProjectionStepSize;
+
+        value.ProjectedBonusCashFlow[timePoint] = value.ProjectedBonusCashFlow[timePoint - 1]
+          + (value.QProcess[timePoint] - value.QProcess[timePoint - 1]) / 2
+          * (Input.MarketBonusCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)]
+          - Input.MarketBonusCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint - 1)]);
+
+        value.AssetProcess[timePoint] = value.AssetProcess[timePoint - 1]
+          + shortRateToLastTimePoint * (value.AssetProcess[timePoint - 1]
+            - value.ShareInRiskyStockAssetProcess[timePoint - 1] * lastTimePointRiskyAssetPrice) * ProjectionStepSize
+          + value.ShareInRiskyStockAssetProcess[timePoint - 1] * riskyAssetPriceChange
+          - (Input.MarketOriginalCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)]
+            - Input.MarketOriginalCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint - 1)])
+          - (value.ProjectedBonusCashFlow[timePoint] - value.ProjectedBonusCashFlow[timePoint - 1])
+          - value.TransactionProcess[Index.Zero][timePoint - 1] * ProjectionStepSize
+          - value.TransactionProcess[Index.One][timePoint - 1];
+
+        transactionSum += value.TransactionProcess[Index.Zero][timePoint - 1] * ProjectionStepSize
+          + value.TransactionProcess[Index.One][timePoint - 1];
+      }
+
+      // Projecting E-process
+      var lastTimeEquity = ecoResult.EquityResults.Equity[timePoint - 1];
+      var shareInRiskyAsset = ecoResult.EquityResults.ShareInRiskyAssetEquity[timePoint - 1];
+
+      ecoResult.EquityResults.Equity[timePoint] = lastTimeEquity
+        + shortRateToLastTimePoint * (lastTimeEquity
+          - shareInRiskyAsset * lastTimePointRiskyAssetPrice) * ProjectionStepSize
+        + shareInRiskyAsset * riskyAssetPriceChange + transactionSum;
     }
 
     /// <summary>
@@ -149,22 +205,21 @@ namespace ProjectionSemiMarkov
     {
       Initialize(ecoResult);
 
-      for (var i = 1; i < NumberOfProjectionTimes; i++)
+      for (var i = 0; i < NumberOfProjectionTimes - 1; i++)
         ProjectPerTimePoint(i, ecoResult);
     }
 
     /// <summary>
     /// Projecting for per time point.
     /// </summary>
-    public void ProjectPerTimePoint(int index, StateIndependentProjectionResult ecoResult)
+    public void ProjectPerTimePoint(int timePoint, StateIndependentProjectionResult ecoResult)
     {
-      //TODO Calculate mean portfolio
+      // Calculating for current time
+      CalculatePortFolioWideReserveForCurrentTimePoint(ecoResult, timePoint);
+      CalculateControlsForCurrentTimePoint(ecoResult, timePoint);
 
-      //TODO Calculate controls
-
-      //TODO Project Q, E, Us
-
-      //TODO Calculate next time bonus cash flow
+      // Project shaped to next time point
+      ProjectShapesNextTimePoint(ecoResult, timePoint + 1);
     }
 
     /// <summary>
@@ -225,17 +280,12 @@ namespace ProjectionSemiMarkov
       /// <summary>
       /// Investment portfolio for equity, \eta^E(t)
       /// </summary>
-      public Dictionary<Assets, double[]> InvestmentPortfolioEquity { get; set; }
+      public double[] ShareInRiskyAssetEquity { get; set; }
 
       public EquityResult(int numberOfProjectionTimes)
       {
         Equity = new double[numberOfProjectionTimes];
-
-        InvestmentPortfolioEquity = new Dictionary<Assets, double[]>
-          {
-            { Assets.ShortRate, new double[numberOfProjectionTimes] },
-            { Assets.RiskyAsset, new double[numberOfProjectionTimes] },
-          };
+        ShareInRiskyAssetEquity = new double[numberOfProjectionTimes];
       }
     }
 
@@ -274,11 +324,14 @@ namespace ProjectionSemiMarkov
       /// <summary>
       /// Investment portfolio for asset process, \eta^U(t)
       /// </summary>
-      public Dictionary<Assets, double[]> InvestmentPortfolioAssetProcess { get; set; }
+      public double[] ShareInRiskyStockAssetProcess { get; set; }
 
       /// <summary>
       /// The transaction process, \xi^0(t) and \xi^1(t)
       /// </summary>
+      /// <remarks>
+      /// We assume that the jump transaction times is exactly at same projection times.
+      /// </remarks>
       public Dictionary<Index, double[]> TransactionProcess { get; set; }
 
       public PortfolioResult(int numberOfProjectionTimes)
@@ -298,11 +351,7 @@ namespace ProjectionSemiMarkov
             { Index.Zero, new double[numberOfProjectionTimes] },
             { Index.One, new double[numberOfProjectionTimes] },
           };
-        InvestmentPortfolioAssetProcess = new Dictionary<Assets, double[]>
-          {
-            { Assets.ShortRate, new double[numberOfProjectionTimes] },
-            { Assets.RiskyAsset, new double[numberOfProjectionTimes] },
-          };
+        ShareInRiskyStockAssetProcess = new double[numberOfProjectionTimes];
       }
     }
   }
