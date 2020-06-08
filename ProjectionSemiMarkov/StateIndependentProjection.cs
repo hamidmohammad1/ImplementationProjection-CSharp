@@ -1,8 +1,6 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 using Math = System.Math;
@@ -105,22 +103,16 @@ namespace ProjectionSemiMarkov
       //TODO OLIVER
       foreach (var portfolio in ecoResult.PortfolioResults)
       {
-        var x = new double();
-        if( timePoint % 12 == 0) //NB: hardcodet, h=1/12 burde bruges!
+
+        var x = 0.0;
+        if (timePoint % 12 == 0)
         {
-          if (portfolio.Value.AssetProcess[timePoint]-portfolio.Value.PortfolioWideTechnicalReserve[timePoint] > 0)
-          {
-             x = 0.003*(portfolio.Value.AssetProcess[timePoint]-portfolio.Value.PortfolioWideTechnicalReserve[timePoint]);
-          }
+          if (portfolio.Value.AssetProcess[timePoint] - portfolio.Value.PortfolioWideTechnicalReserve[timePoint] > 0)
+            x = 0.003 * (portfolio.Value.AssetProcess[timePoint] - portfolio.Value.PortfolioWideTechnicalReserve[timePoint]);
           else
-          {
-            x = -(portfolio.Value.AssetProcess[timePoint]-portfolio.Value.PortfolioWideTechnicalReserve[timePoint]);
-          }
+            x = -(portfolio.Value.AssetProcess[timePoint] - portfolio.Value.PortfolioWideTechnicalReserve[timePoint]);
         }
-        else
-        {
-          x = 0;
-        }
+
         portfolio.Value.TransactionProcess[Index.Zero][timePoint] = 0.0;
         portfolio.Value.TransactionProcess[Index.One][timePoint] = x; //take 0.3% of "surplus" if positive, otherwise, transfer so surplus is non-negative 
         portfolio.Value.DividendProcess[Index.Zero][timePoint] = 0.01;
@@ -201,7 +193,7 @@ namespace ProjectionSemiMarkov
     /// <summary>
     /// Projecting for all economic scenarios.
     /// </summary>
-    public void Project()
+    public Balance Project()
     {
       for (var i = 0; i < NumberOfEconomicScenarios; i++)
       {
@@ -214,6 +206,26 @@ namespace ProjectionSemiMarkov
 
         ProjectionResult.Add(ecoResult);
       }
+
+      return CalculateBalance();
+    }
+
+    /// <summary>
+    /// Calculating balance values
+    /// </summary>
+    public Balance CalculateBalance()
+    {
+      // The V^b(0) for each portfolio
+      var bonusReserveAtTimeZero = Input.Policies.ToDictionary(
+        x => x.Key,
+        x => ProjectionResult
+          .Average(eco =>
+            ReserveCalculator(
+              timePoint: 0,
+              shortRate: eco.EconomicScenario[Assets.ShortRate][0],
+              cashFlows: eco.PortfolioResults[x.Key].ProjectedBonusCashFlow)));
+
+      return new Balance(bonusReserveAtTimeZero, ProjectionResult, Input);
     }
 
     /// <summary>
@@ -307,6 +319,39 @@ namespace ProjectionSemiMarkov
       }
     }
 
+    /// <summary>
+    /// The class containing balance values.
+    /// </summary>
+    public class Balance
+    {
+      /// <summary>
+      /// The V^b(0) per portfolio
+      /// </summary>
+      public Dictionary<string, double> BonusReservePerPortfolioAtTimeZero { get; set; }
+
+      /// <summary>
+      /// The projection results
+      /// </summary>
+      public List<StateIndependentProjectionResult> ProjectionResults { get; set; }
+
+      /// <summary>
+      /// The projection input
+      /// </summary>
+      public ProjectionInput ProjectionInput { get; set; }
+
+      public Balance(Dictionary<string, double> bonusReservePerPortfolio,
+        List<StateIndependentProjectionResult> projectionResults,
+        ProjectionInput projectionInput)
+      {
+        this.BonusReservePerPortfolioAtTimeZero = bonusReservePerPortfolio;
+        this.ProjectionResults = projectionResults;
+        this.ProjectionInput = projectionInput;
+      }
+    }
+
+    /// <summary>
+    /// The class containing results of projection per economic scenario
+    /// </summary>
     public class PortfolioResult
     {
       /// <summary>

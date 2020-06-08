@@ -229,14 +229,19 @@ namespace ProjectionSemiMarkov
     public static Product CreatePremiumPayment(double value)
     {
       Func<double, double> paymentsTechnical = x => LessThanIndicator(x, pensionAge) * value;
+      Func<double, double, double> paymentsMarket = (x,y) => paymentsTechnical(x);
 
       var technicalContinuousPayments = new Dictionary<State, Func<double, double>>
       {
         { State.Active, paymentsTechnical },
-        { State.Disabled, paymentsTechnical }
       };
 
-      return new Product(technicalContinuousPayments, null, null, null, ProductCollection.Premium);
+      var marketContinuousPayments = new Dictionary<State, Func<double, double, double>>
+        {
+          { State.Active, paymentsMarket },
+        };
+
+      return new Product(technicalContinuousPayments, null, marketContinuousPayments, null, ProductCollection.Premium);
     }
 
     /// <summary>
@@ -250,8 +255,7 @@ namespace ProjectionSemiMarkov
     /// <returns>A deferred disability annuity.</returns>
     public static Product CreateDeferredDisabilityAnnuity(double value)
     {
-      Func<double, double> paymentsTechnical =
-        x => LessThanIndicator(x, pensionAge) * value;
+      Func<double, double> paymentsTechnical = x => LessThanIndicator(x, pensionAge) * value;
 
       Func<double, double, double> paymentsMarket =
         (x, u) => LessThanIndicator(x, pensionAge) * GreaterThanIndicator(u, 1) * value;
