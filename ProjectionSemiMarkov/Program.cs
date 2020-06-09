@@ -15,10 +15,7 @@ namespace ProjectionSemiMarkov
         ecoScenarioGenerator: new EconomicScenarioGenerator(),
         numberOfEconomicScenarios: 1);
 
-      stateIndependentProjection.Project();
-
-      var result = stateIndependentProjection.ProjectionResult;
-      //TODO NOW CALCULATE BALANCE QUANTITIES. Should be easy.
+      var balanceAndResults = stateIndependentProjection.Project();
 
       stopWatch.Stop();
       var timeInSeconds = stopWatch.ElapsedMilliseconds;

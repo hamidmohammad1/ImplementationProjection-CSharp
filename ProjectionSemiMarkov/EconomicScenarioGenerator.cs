@@ -15,9 +15,9 @@ namespace ProjectionSemiMarkov
     private (double initialValue, double μ, double σ) riskyAsset = (100, 0.04, -0.2);
 
     /// <summary>
-    /// The Vasicek modelled by a diffusion: dr(t) = (b - β * r(t))dt +  a * dW_2(t).
+    /// The Vasicek modelled by a diffusion: dr(t) = (b - β * r(t))dt +  a * dW_2(t). Old beta: 0.0.162953
     /// </summary>
-    private (double initialValue, double b, double β, double a) vasicek = (0.01, 0.007006001, 0.162953, 0.015384);
+    private (double initialValue, double b, double β, double a) vasicek = (0.01, 0.007006001, 0.192953, 0.015384);
 
     /// <summary>
     /// The number of time points. This is number of step to max expiry for all policies.
