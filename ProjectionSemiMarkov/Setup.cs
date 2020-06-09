@@ -170,9 +170,9 @@ namespace ProjectionSemiMarkov
     /// <returns>Dictionary with policies.</returns>
     public static Dictionary<string, Policy> CreatePolicies()
     {
-      var lifeAnnuityProduct = CreateLifeAnnuity(1000);
-      var premiumProduct = CreatePremiumPayment(-200);
-      var deferredDisabilityAnnuity = CreateDeferredDisabilityAnnuity(500);
+      var lifeAnnuityProduct = CreateLifeAnnuity(100000);
+      var premiumProduct = CreatePremiumPayment(-26178);
+      var deferredDisabilityAnnuity = CreateDeferredDisabilityAnnuity(100000);
 
       var policy1Premium = new List<Product> { premiumProduct };
       var policy1Benefits = new List<Product> { lifeAnnuityProduct, deferredDisabilityAnnuity };

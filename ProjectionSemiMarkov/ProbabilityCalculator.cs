@@ -232,28 +232,34 @@ namespace ProjectionSemiMarkov
     {
       var standardStates = GiveCollectionOfStates(StateCollection.Standard);
       var freePolicyStates = GiveCollectionOfStates(StateCollection.FreePolicyStates);
-
       var policyIdCashFlows = new Dictionary<string, double[]>();
 
       foreach (var (policyId, policy) in policies)
       {
-        var cashFlows = new double[Probabilities[policyId].First().Value.Length];
+        var cashFlowsStandardStates = new double[Probabilities[policyId].First().Value.Length];
+        var cashFlowsFreePolicyStates = new double[Probabilities[policyId].First().Value.Length];
 
         var positiveOriginalPayments = policy.Payments[(PaymentStream.Original, Sign.Positive)];
         var negativeOriginalPayments = policy.Payments[(PaymentStream.Original, Sign.Negative)];
         var sumPayments = SumProducts(new List<Product> { positiveOriginalPayments, negativeOriginalPayments });
 
+        for(var z = 0; z < 90; z++)
+          Console.WriteLine(positiveOriginalPayments.MarketContinuousPayment[State.Disabled](z,2));
+
         // Since we have no products with jump payments (except surrender value), we only extract the continuous payments.
         var policyIdOriginalTechReserve = OriginalTechReserves[policyId];
-        CalculateCashFlowsPerStateSet(standardStates, cashFlows, sumPayments.MarketContinuousPayment,
+        CalculateCashFlowsPerStateSet(standardStates, cashFlowsStandardStates, sumPayments.MarketContinuousPayment,
           policyIdOriginalTechReserve, policy.age, marketIntensities[policy.gender], Probabilities[policyId]);
 
         var policyIdOriginalPositiveTechReserve = OriginalPositiveTechReserves[policyId];
-        CalculateCashFlowsPerStateSet(freePolicyStates, cashFlows,
-          positiveOriginalPayments.MarketContinuousPayment, policyIdOriginalPositiveTechReserve, policy.age,
-          marketIntensities[policy.gender], RhoProbabilities[policyId]);
+        CalculateCashFlowsPerStateSet(freePolicyStates, cashFlowsFreePolicyStates, positiveOriginalPayments.MarketContinuousPayment,
+          policyIdOriginalPositiveTechReserve, policy.age, marketIntensities[policy.gender], RhoProbabilities[policyId]);
 
-        policyIdCashFlows.Add(policyId, cashFlows);
+        var s = cashFlowsFreePolicyStates.Zip(cashFlowsStandardStates, (x, y) => x + y).ToArray();
+        for (var j = 1; j < s.Length; j++)
+          s[j] += s[j - 1];
+
+        policyIdCashFlows.Add(policyId, s);
       }
 
       return policyIdCashFlows;
@@ -276,6 +282,9 @@ namespace ProjectionSemiMarkov
         var policyIdBonusTech = BonusTechReserves[policyId].ToDictionary(x => x.Key, x => x.Value.ToList());
         CalculateCashFlowsPerStateSet(allStates, cashFlows, bonusPayments.MarketContinuousPayment,
           policyIdBonusTech, policy.age, marketIntensities[policy.gender], Probabilities[policyId]);
+
+        for (var j = 1; j < cashFlows.Length; j++)
+          cashFlows[j] += cashFlows[j - 1];
 
         policyIdCashFlows.Add(policyId, cashFlows);
       }
@@ -308,32 +317,26 @@ namespace ProjectionSemiMarkov
           if (TransitionExists(genderIntensity, toState, State.Surrender))
           {
             for (var z = 1; z < policyIdProbInState[s].Length; z++)
-            {
               cashFlow = cashFlow + (paymentInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
                 + techReserve[toState][s] * genderIntensity[toState][State.Surrender](policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize))
                 * (policyIdProbInState[s][z] - policyIdProbInState[s][z - 1]);
-            }
           }
           else if (TransitionExists(genderIntensity, toState, State.FreePolicySurrender))
           {
             for (var z = 1; z < policyIdProbInState[s].Length; z++)
-            {
               cashFlow = cashFlow + (paymentInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
                 + techReserve[ConvertToStandardState(toState)][s]
                 * genderIntensity[toState][State.FreePolicySurrender](policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize))
                 * (policyIdProbInState[s][z] - policyIdProbInState[s][z - 1]);
-            }
           }
           else
           {
             for (var z = 1; z < policyIdProbInState[s].Length; z++)
-            {
               cashFlow = cashFlow + paymentInState(policyAge + (s - 0.5) * stepSize, (z - 0.5) * stepSize)
                 * (policyIdProbInState[s][z] - policyIdProbInState[s][z - 1]);
-            }
           }
 
-          cashFlows[s] = cashFlows[s - 1] + cashFlow * stepSize;
+          cashFlows[s] = cashFlows[s] + cashFlow * stepSize;
         }
       }
     }

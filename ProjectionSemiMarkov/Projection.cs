@@ -56,11 +56,11 @@ namespace ProjectionSemiMarkov
         = technicalReserveCalculator.CalculateTechnicalReserve();
 
       var marketProbabilityCalculator = new ProbabilityCalculator(
-          policyIdInitialStateDuration: technicalReserveCalculator.policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration)),
           time: 0,
           freePolicyFactor: technicalReserveCalculator.CalculateFreePolicyFactor(),
           originalTechReserves: originalTechReserves,
-          originalPositiveTechReserves: originalTechPositiveReserves);
+          originalPositiveTechReserves: originalTechPositiveReserves,
+          bonusTechnicalReserves);
 
       // Initial state must be active or disability, if one wants to calculate RhoModifiedProbabilities
       marketProbabilityCalculator.Calculate(calculateRhoProbability: true);
@@ -78,9 +78,8 @@ namespace ProjectionSemiMarkov
 
       Policies = marketProbabilityCalculator.policies;
 
-      // WAIT FOR USAGE
+      // NOT IN USE
       var marketProbabilityQCalculator = new ProbabilityQCalculator(
-        policyIdInitialStateDuration: technicalReserveCalculator.policies.ToDictionary(x => x.Key, x => (x.Value.initialState, x.Value.initialDuration)),
         time: 0.0,
         probabilities: ProbabilitiesTimeZero,
         technicalReserves: BonusTechnicalReserves);

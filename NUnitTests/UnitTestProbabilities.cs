@@ -81,8 +81,10 @@ namespace NUnitTests
       for (var i = 0; i <= 90 * 12; i++)
       {
         Console.WriteLine("Years: " + i/12 + " and months " + i % 12 );
-        foreach (var state in marketProbabilityCalculator.MarketStateSpace)
-          Console.WriteLine("Tilstand " + state + " med ssh:  " + probabilities[policy1.policyId][state][i][marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, i)]);
+        //foreach (var state in marketProbabilityCalculator.MarketStateSpace)
+          //Console.WriteLine("Tilstand " + state + " med ssh:  " + probabilities[policy1.policyId][state][i][marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, i)]);
+        foreach (var state in GiveCollectionOfStates(StateCollection.FreePolicyStatesWithSurrender))
+          Console.WriteLine("Free police tilstand " + state + " med ssh:  " + rhoProbabilities[policy1.policyId][state][i][marketProbabilityCalculator.DurationSupportIndex(policy1.initialDuration, i)]);
         Console.WriteLine("----------------------------------------------------------------");
       }
     }
