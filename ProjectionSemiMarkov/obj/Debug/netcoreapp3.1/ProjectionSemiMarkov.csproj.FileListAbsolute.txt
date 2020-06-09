@@ -76,3 +76,16 @@ C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMark
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
 C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csproj.CoreCompileInputs.cache
+C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.genruntimeconfig.cache

@@ -78,7 +78,7 @@ namespace ProjectionSemiMarkov
     ///        &= \exp\left(-\frac{ b}{\beta}(T-t- \frac{1}{\beta}(1-e^{-\beta(T-t)}) ) -\frac{a^2}{2\beta^2}(B(t, T) - (T-t)) -\frac{a^2}{4\beta}B(t, T)^2 \right)
     ///        &= \exp\left(-\frac{ b}{\beta}(T-t- B(t, T) ) -\frac{a^2}{2\beta^2}(B(t, T) - (T-t)) -\frac{a^2}{4\beta}B(t, T)^2 \right)
     /// </remarks>
-    public double ZeroCouponBondPrices(double interest, double t, double T)
+    public double ZeroCouponBondPrices(double interest, double t, double T) //todo - hvis vi er usikre på disse resultater kan vi bruge drengenes parametrisering da de også finder F(t,r(t),T) og dens afledte 
     {
       var remainingTime = T - t;
       var b = 1 / vasicek.β * (1 - Math.Exp(-vasicek.β * remainingTime));
@@ -87,6 +87,17 @@ namespace ProjectionSemiMarkov
         - Math.Pow(vasicek.a, 2)/(4 * vasicek.β)* Math.Pow(b, 2));
       return a * Math.Exp(-b * interest);
     }
+
+    public double ZeroCouponBondPriceDerivatives(double interest, double t, double T) 
+    {
+      var remainingTime = T - t;
+      var b = 1 / vasicek.β * (1 - Math.Exp(-vasicek.β * remainingTime));
+      var a = Math.Exp(-vasicek.b/vasicek.β * (remainingTime - b)
+        - Math.Pow(vasicek.a, 2)/(2 * Math.Pow(vasicek.β, 2))*(b - remainingTime)
+        - Math.Pow(vasicek.a, 2)/(4 * vasicek.β)* Math.Pow(b, 2));
+      return -b * a * Math.Exp(-b * interest);
+    }
+
   }
 
   /// <summary>

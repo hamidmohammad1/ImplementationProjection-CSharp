@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using static ProjectionSemiMarkov.HelperFunctions;
 
 using Math = System.Math;
 
@@ -12,6 +13,20 @@ namespace ProjectionSemiMarkov
 {
   class StateIndependentProjection
   {
+       protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> marketIntensities //todo - should have imported
+      = Setup.CreateMarketBasisIntensities();
+
+    /// <summary>
+    /// A dictionary containing the technical intensities.
+    /// </summary>
+    protected Dictionary<Gender, Dictionary<State, Dictionary<State, Func<double, double, double>>>> technicalIntensities //todo - should have imported
+      = Setup.CreateTechnicalBasisIntensities().Item1;
+
+    /// <summary>
+    /// A list of possible states in market basis.
+    /// </summary>
+    public IEnumerable<State> MarketStateSpace => GiveStateSpaceFromIntensities(marketIntensities); //todo - should have imported
+    
     /// <summary>
     /// The projection Input
     /// </summary>
@@ -122,13 +137,26 @@ namespace ProjectionSemiMarkov
           x = 0;
         }
 
-        var h1 = new double();
+        var h1 = new double(); //Use "Tax- and expense-modified risk-minimization for insurance payment processes" p.24 with gamma=delta=0
+        var rt = ecoResult.EconomicScenario[Assets.ShortRate][ProjectionIndexCalculatorIndexConverter(timePoint)]; //todo - unsure if this is the right timePoint conversion here.
+        var timePointYear = ProjectionIndexToTimeInYear(timePoint);
+        var Y = 0.0;
+        for (var t = timePoint; t <= ProjectionTimeInYearToIndex(ProjectionEndTime); t++)
+        {
+            Y = (Input.MarketOriginalCashFlows[portfolio.Key][t]+portfolio.Value.QProcess[timePoint]*Input.MarketBonusCashFlows[portfolio.Key][t])
+                -(Input.MarketOriginalCashFlows[portfolio.Key][timePoint]+portfolio.Value.QProcess[timePoint]*Input.MarketBonusCashFlows[portfolio.Key][timePoint]);
+
+            h1 = h1 + EcoScenarioGenerator.ZeroCouponBondPriceDerivatives(rt,timePointYear,ProjectionIndexToTimeInYear(t))
+                      /EcoScenarioGenerator.ZeroCouponBondPriceDerivatives(rt,timePointYear,ProjectionEndTime)
+                      *Y
+                      *ProjectionStepSize;
+        }
 
         portfolio.Value.TransactionProcess[Index.Zero][timePoint] = 0.0;
         portfolio.Value.TransactionProcess[Index.One][timePoint] = x; //take 0.3% of "surplus" if positive, otherwise, transfer so surplus is non-negative 
         portfolio.Value.DividendProcess[Index.Zero][timePoint] = 0.01;
         portfolio.Value.DividendProcess[Index.One][timePoint] = 0.01;
-        portfolio.Value.ShareInRiskyStockAssetProcess[timePoint] = 0.0;
+        portfolio.Value.ShareInRiskyStockAssetProcess[timePoint] = h1;
       }
       ecoResult.EquityResults.ShareInRiskyAssetEquity[timePoint] = 0.0;
     }
@@ -281,6 +309,11 @@ namespace ProjectionSemiMarkov
     public int ProjectionIndexToTimeInYear(double timePoint)
     {
       return (int)(timePoint * ProjectionStepSize);
+    }
+
+    public int ProjectionTimeInYearToIndex(double timePoint)
+    {
+      return (int)(timePoint / ProjectionStepSize);
     }
 
     public class StateIndependentProjectionResult
