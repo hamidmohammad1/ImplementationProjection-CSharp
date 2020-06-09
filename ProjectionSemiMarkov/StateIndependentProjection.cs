@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -121,6 +122,9 @@ namespace ProjectionSemiMarkov
         {
           x = 0;
         }
+
+        var h1 = new double();
+
         portfolio.Value.TransactionProcess[Index.Zero][timePoint] = 0.0;
         portfolio.Value.TransactionProcess[Index.One][timePoint] = x; //take 0.3% of "surplus" if positive, otherwise, transfer so surplus is non-negative 
         portfolio.Value.DividendProcess[Index.Zero][timePoint] = 0.01;
