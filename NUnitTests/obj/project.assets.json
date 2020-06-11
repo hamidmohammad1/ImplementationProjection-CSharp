@@ -4644,33 +4644,35 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Sandqvist1\\.nuget\\packages\\": {}
+    "/Users/hamidmohammad/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Sandqvist1\\source\\repos\\ImplementationProjection-CSharp\\NUnitTests\\NUnitTests.csproj",
+      "projectUniqueName": "/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/NUnitTests/NUnitTests.csproj",
       "projectName": "NUnitTests",
-      "projectPath": "C:\\Users\\Sandqvist1\\source\\repos\\ImplementationProjection-CSharp\\NUnitTests\\NUnitTests.csproj",
-      "packagesPath": "C:\\Users\\Sandqvist1\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Sandqvist1\\source\\repos\\ImplementationProjection-CSharp\\NUnitTests\\obj\\",
+      "projectPath": "/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/NUnitTests/NUnitTests.csproj",
+      "packagesPath": "/Users/hamidmohammad/.nuget/packages/",
+      "outputPath": "/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/NUnitTests/obj/",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Sandqvist1\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/hamidmohammad/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
           "projectReferences": {
-            "C:\\Users\\Sandqvist1\\source\\repos\\ImplementationProjection-CSharp\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj": {
-              "projectPath": "C:\\Users\\Sandqvist1\\source\\repos\\ImplementationProjection-CSharp\\ProjectionSemiMarkov\\ProjectionSemiMarkov.csproj"
+            "/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/ProjectionSemiMarkov.csproj": {
+              "projectPath": "/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/ProjectionSemiMarkov.csproj"
             }
           }
         }
@@ -4707,18 +4709,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[3.1.2, 3.1.2]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.300/RuntimeIdentifierGraph.json"
       }
     }
   }

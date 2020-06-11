@@ -1,91 +1,103 @@
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\ProjectionSemiMarkov\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Sandqvist1\Source\Repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Sandqvist1\Source\Repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.genruntimeconfig.cache
-C:\Users\Sandqvist1\source\repos\Computation-of-bonus-in-semi-markov-setup\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csproj.CoreCompileInputs.cache
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master\C#\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\Computation-of-bonus-in-semi-markov-setup-master - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\Projection Implementation C# - Copy\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Z6HYM\Desktop\ImplementationProjection-CSharp-master\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.exe
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.deps.json
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.json
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.runtimeconfig.dev.json
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.dll
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\bin\Debug\netcoreapp3.1\ProjectionSemiMarkov.pdb
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csprojAssemblyReference.cache
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfoInputs.cache
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.AssemblyInfo.cs
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.csproj.CoreCompileInputs.cache
-C:\Users\Sandqvist1\source\repos\ImplementationProjection-CSharp\ProjectionSemiMarkov\obj\Debug\netcoreapp3.1\ProjectionSemiMarkov.genruntimeconfig.cache
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/ProjectionSemiMarkov/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Sandqvist1/Source/Repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Sandqvist1/Source/Repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.genruntimeconfig.cache
+C:/Users/Sandqvist1/source/repos/Computation-of-bonus-in-semi-markov-setup/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csproj.CoreCompileInputs.cache
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master/C#/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/Computation-of-bonus-in-semi-markov-setup-master - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/Projection Implementation C# - Copy/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Z6HYM/Desktop/ImplementationProjection-CSharp-master/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.exe
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csproj.CoreCompileInputs.cache
+C:/Users/Sandqvist1/source/repos/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.genruntimeconfig.cache
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.deps.json
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.json
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.runtimeconfig.dev.json
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/bin/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csprojAssemblyReference.cache
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfoInputs.cache
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.AssemblyInfo.cs
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.csproj.CoreCompileInputs.cache
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.dll
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.pdb
+/Users/hamidmohammad/Documents/GitHub/ImplementationProjection-CSharp/ProjectionSemiMarkov/obj/Debug/netcoreapp3.1/ProjectionSemiMarkov.genruntimeconfig.cache

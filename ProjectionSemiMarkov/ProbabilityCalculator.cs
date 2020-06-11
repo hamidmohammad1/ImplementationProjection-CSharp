@@ -243,9 +243,6 @@ namespace ProjectionSemiMarkov
         var negativeOriginalPayments = policy.Payments[(PaymentStream.Original, Sign.Negative)];
         var sumPayments = SumProducts(new List<Product> { positiveOriginalPayments, negativeOriginalPayments });
 
-        for(var z = 0; z < 90; z++)
-          Console.WriteLine(positiveOriginalPayments.MarketContinuousPayment[State.Disabled](z,2));
-
         // Since we have no products with jump payments (except surrender value), we only extract the continuous payments.
         var policyIdOriginalTechReserve = OriginalTechReserves[policyId];
         CalculateCashFlowsPerStateSet(standardStates, cashFlowsStandardStates, sumPayments.MarketContinuousPayment,
