@@ -1,12 +1,12 @@
 ﻿<Properties StartupConfiguration="{DEF1E816-0FA9-4FFB-86A1-3705DD3A2DFB}|Default">
   <MonoDevelop.Ide.ItemProperties.ProjectionSemiMarkov PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ProjectionSemiMarkov/ProbabilityCalculator.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ProjectionSemiMarkov/Program.cs">
     <Files>
-      <File FileName="ProjectionSemiMarkov/Program.cs" Line="22" Column="7" />
-      <File FileName="ProjectionSemiMarkov/StateIndependentProjection.cs" Line="235" Column="20" />
-      <File FileName="ProjectionSemiMarkov/Setup.cs" Line="1" Column="1" />
-      <File FileName="ProjectionSemiMarkov/ProjectionInput.cs" Line="115" Column="35" />
-      <File FileName="NUnitTests/UnitTestProbabilities.cs" Line="87" Column="8" />
+      <File FileName="ProjectionSemiMarkov/Program.cs" Line="17" Column="1" />
+      <File FileName="ProjectionSemiMarkov/StateIndependentProjection.cs" Line="47" Column="22" />
+      <File FileName="ProjectionSemiMarkov/Setup.cs" />
+      <File FileName="ProjectionSemiMarkov/ProjectionInput.cs" />
+      <File FileName="NUnitTests/UnitTestProbabilities.cs" />
       <File FileName="ProjectionSemiMarkov/ProbabilityCalculator.cs" Line="236" Column="1" />
     </Files>
     <Pads>
@@ -15,7 +15,7 @@
           <Node name="ProjectionSemiMarkov" expanded="True">
             <Node name="NUnitTests" expanded="True" />
             <Node name="ProjectionSemiMarkov" expanded="True">
-              <Node name="ProbabilityCalculator.cs" selected="True" />
+              <Node name="Program.cs" selected="True" />
             </Node>
           </Node>
         </State>

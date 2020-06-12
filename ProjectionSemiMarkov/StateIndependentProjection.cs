@@ -1,10 +1,6 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using static ProjectionSemiMarkov.HelperFunctions;
 
 using Math = System.Math;
@@ -101,13 +97,13 @@ namespace ProjectionSemiMarkov
     {
       foreach (var (portfolio, value) in ecoResult.PortfolioResults)
       {
-        value.PortfolioWideTechnicalReserve[timePoint] = Input.PortfolioWideOriginalTechReserves[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)]
-          + value.QProcess[timePoint]* Input.PortfolioWideBonusTechReserves[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)];
+        value.PortfolioWideTechnicalReserve[timePoint] = Input.PortfolioWideOriginalTechReserves[portfolio][TimePointToIndex(timePoint)]
+          + value.QProcess[timePoint]* Input.PortfolioWideBonusTechReserves[portfolio][TimePointToIndex(timePoint)];
 
         value.PortfolioWideMarketReserve[timePoint] =
           ReserveCalculator(
           timePoint,
-          ecoResult.EconomicScenario[Assets.ShortRate][ProjectionIndexCalculatorIndexConverter(timePoint)],
+          ecoResult.EconomicScenario[Assets.ShortRate][TimePointToIndex(timePoint)],
           Input.MarketOriginalCashFlows[portfolio]
             .Zip(Input.MarketBonusCashFlows[portfolio], (x, y) => x + value.QProcess[timePoint] * y).ToArray());
       }
@@ -138,7 +134,7 @@ namespace ProjectionSemiMarkov
         }
 
         var h1 = new double(); //Use "Tax- and expense-modified risk-minimization for insurance payment processes" p.24 with gamma=delta=0
-        var rt = ecoResult.EconomicScenario[Assets.ShortRate][ProjectionIndexCalculatorIndexConverter(timePoint)]; //todo - unsure if this is the right timePoint conversion here.
+        var rt = ecoResult.EconomicScenario[Assets.ShortRate][TimePointToIndex(timePoint)]; //todo - unsure if this is the right timePoint conversion here.
         var timePointYear = ProjectionIndexToTimeInYear(timePoint);
         var Y = 0.0;
         for (var t = timePoint; t <= ProjectionTimeInYearToIndex(ProjectionEndTime); t++)
@@ -166,10 +162,10 @@ namespace ProjectionSemiMarkov
     /// </summary>
     public void ProjectShapesNextTimePoint(StateIndependentProjectionResult ecoResult, int timePoint)
     {
-      var shortRateToLastTimePoint = ecoResult.EconomicScenario[Assets.ShortRate][ProjectionIndexCalculatorIndexConverter(timePoint - 1)];
-      var lastTimePointRiskyAssetPrice = ecoResult.EconomicScenario[Assets.RiskyAsset][ProjectionIndexCalculatorIndexConverter(timePoint - 1)];
+      var shortRateToLastTimePoint = ecoResult.EconomicScenario[Assets.ShortRate][TimePointToIndex(timePoint - 1)];
+      var lastTimePointRiskyAssetPrice = ecoResult.EconomicScenario[Assets.RiskyAsset][TimePointToIndex(timePoint - 1)];
       var riskyAssetPriceChange =
-        ecoResult.EconomicScenario[Assets.RiskyAsset][ProjectionIndexCalculatorIndexConverter(timePoint)]
+        ecoResult.EconomicScenario[Assets.RiskyAsset][TimePointToIndex(timePoint)]
         - lastTimePointRiskyAssetPrice;
 
       var transactionSum = 0.0;
@@ -183,15 +179,15 @@ namespace ProjectionSemiMarkov
 
         value.ProjectedBonusCashFlow[timePoint] = value.ProjectedBonusCashFlow[timePoint - 1]
           + (value.QProcess[timePoint] - value.QProcess[timePoint - 1]) / 2
-          * (Input.MarketBonusCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)]
-          - Input.MarketBonusCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint - 1)]);
+          * (Input.MarketBonusCashFlows[portfolio][TimePointToIndex(timePoint)]
+          - Input.MarketBonusCashFlows[portfolio][TimePointToIndex(timePoint - 1)]);
 
         value.AssetProcess[timePoint] = value.AssetProcess[timePoint - 1]
           + shortRateToLastTimePoint * (value.AssetProcess[timePoint - 1]
             - value.ShareInRiskyStockAssetProcess[timePoint - 1] * lastTimePointRiskyAssetPrice) * ProjectionStepSize
           + value.ShareInRiskyStockAssetProcess[timePoint - 1] * riskyAssetPriceChange
-          - (Input.MarketOriginalCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint)]
-            - Input.MarketOriginalCashFlows[portfolio][ProjectionIndexCalculatorIndexConverter(timePoint - 1)])
+          - (Input.MarketOriginalCashFlows[portfolio][TimePointToIndex(timePoint)]
+            - Input.MarketOriginalCashFlows[portfolio][TimePointToIndex(timePoint - 1)])
           - (value.ProjectedBonusCashFlow[timePoint] - value.ProjectedBonusCashFlow[timePoint - 1])
           - value.TransactionProcess[Index.Zero][timePoint - 1] * ProjectionStepSize
           - value.TransactionProcess[Index.One][timePoint - 1];
@@ -218,11 +214,11 @@ namespace ProjectionSemiMarkov
       var reserve = 0.0;
 
       // We minus with one, cause we are integrating over intervals (t_{i}, t_{i+1}], ..., (t_{n-1}, t_{n}].
-      for (var i = timePoint; i < ProjectionIndexCalculatorIndexConverter(cashFlows.Length, true) - 1; i++)
+      for (var i = timePoint; i < TimePointToIndex(cashFlows.Length, true) - 1; i++)
       {
         reserve += EcoScenarioGenerator.ZeroCouponBondPrices(shortRate, ProjectionIndexToTimeInYear(timePoint),
             ProjectionIndexToTimeInYear(i + 0.5))
-          * (cashFlows[ProjectionIndexCalculatorIndexConverter(i + 1)] - cashFlows[ProjectionIndexCalculatorIndexConverter(i)])
+          * (cashFlows[TimePointToIndex(i + 1)] - cashFlows[TimePointToIndex(i)])
           * 0.5 * ProjectionStepSize;
       }
 
@@ -295,12 +291,12 @@ namespace ProjectionSemiMarkov
     /// Converts a time point in unit projection step size into units of step size from calculator or reverse
     /// based on a boolean.
     /// </summary>
-    public int ProjectionIndexCalculatorIndexConverter(int timePoint, bool reverse = false)
+    public int TimePointToIndex(int timePoint, bool reverse = false)
     {
       if (reverse)
-        return (int)(timePoint * Input.StepSize);
+        return (int)(timePoint / ProjectionStepSize * Input.StepSize);
 
-      return (int)(timePoint / Input.StepSize);
+      return (int)(timePoint * ProjectionStepSize / Input.StepSize);
     }
 
     /// <summary>
